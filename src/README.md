@@ -20,7 +20,7 @@ Structure of the codebase
 └── types                 # types used throughout the project
 </pre>
 
-# Configuartion Example
+# Configuration Example
 
 For full code see [test-configuration](https://github.com/portals/app-template/src/test-configuration)
 
@@ -35,7 +35,6 @@ test-configuration/
 │   └── publications.ts                     
 ├── footerConfig.ts                         # Configure the footer data -- terms of use, contact us
 ├── headerConfig.ts                         # Configure the text on the header of the home page
-├── loadingScreen.tsx                       
 ├── routesConfig.ts                         # Configure main routes for the app -- what is available and what synapse object 
 ├── scripts                                 # build scripts that export s3 bucket names
 │   ├── exportS3ProductionBucketName.sh     
@@ -44,3 +43,21 @@ test-configuration/
     ├── _overides.scss                      # contains main theme colors
     └── header.svg                          # OPTIONAL: File that will be used for background-img on home page header
 </pre>
+
+# Adding new components from SRC or the portal
+
+To expose a new component add an entry to the [portal-config.ts](./types/portal-config.ts), this tells the
+type system how to treat the component in the actual config.
+
+Note - if exposing a component from the portal side, you will need to make sure that the component is exported from [index.ts](./portal-components/index.ts).
+
+# Key Portal Components
+
+## RouteResolver
+
+The route resolver handles taking a URL and matching it the config. Read more in the [component](./RouteResolver.tsx). This component is also responsible for injecting the session token into the react component.
+
+## DetailsPages
+
+The detail pages ([e.g.](https://staging.adknowledgeportal.synapse.org/Explore/Studies/DetailsPage?Study=syn5550404])) give
+a deeper dive into a particular portal section. Read more in the [component](./portal-components/DetailsPage.tsx).

@@ -1,27 +1,26 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig, SynapseConfigArray } from 'types/portal-config'
-import loadingScreen from '../loadingScreen'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import facetAliases from '../facetAliases'
-import { GenerateComponentsFromRowProps } from 'types/portal-util-types'
+import { DetailsPageProps } from 'types/portal-util-types'
 import { dataDetailPageProps } from './data'
 import { toolsDetailPageProps } from './tools'
 import { publicationDetailPageProps } from './publications'
-export const studySql =
-  "SELECT * FROM syn21994974 WHERE ((isDHProject IS NULL) OR (isDHProject <> 'TRUE')) AND (dhPortalIndex = 'TRUE') "
-export const studyEntityId = 'syn21994974'
-const entityId = studyEntityId
-const sql = studySql
-const unitDescription = 'Studies'
+import { studySql } from '../resources'
+import { iconOptions } from './iconOptions'
+
+const unitDescription = 'Collections'
 const rgbIndex = 9
 
 export const studySchema: GenericCardSchema = {
-  type: SynapseConstants.STUDY,
+  type: '',
   title: 'study',
   subTitle: 'investigator',
+  icon: 'collectionType',
   description: 'studyDescription',
   secondaryLabels: [
+    'collectionType',
     'diagnosis',
     'intervention',
     'numberParticipants',
@@ -34,6 +33,7 @@ export const studySchema: GenericCardSchema = {
     'digitalAssessmentCategory',
     'digitalAssessmentDetails',
     'sensorDataType',
+    'dataUsed',
     'keywords',
   ],
 }
@@ -41,53 +41,45 @@ export const studySchema: GenericCardSchema = {
 export const studiesCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: studySchema,
+  iconOptions,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Studies/DetailsPage',
+    baseURL: 'Explore/Collections/DetailsPage',
     URLColumnName: 'study',
     matchColumnName: 'study',
   },
-  loadingScreen,
+  labelLinkConfig: [
+    {
+      matchColumnName: 'dataUsed',
+      isMarkdown: true,
+    },
+  ],
 }
 
 export const studies: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       rgbIndex,
       unitDescription,
-      loadingScreen,
       facet: 'theme',
-      link: 'Explore/Studies',
-      linkText: 'Explore Studies',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      link: 'Explore/Collections',
+      linkText: 'Explore Collections',
+      sql: studySql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
       cardConfiguration: studiesCardConfiguration,
-      sql,
+      sql: studySql,
       shouldDeepLink: true,
       hideDownload: true,
-      name: 'Studies',
-      loadingScreen,
+      name: 'Collections',
       facetAliases,
       facetsToPlot: [
+        'collectionType',
         'deviceLocation',
         'devicePlatform',
         'deviceType',
@@ -97,13 +89,24 @@ export const studies: HomeExploreConfig = {
         'reportedOutcome',
         'sensorType',
       ],
+      searchConfiguration: {
+        searchable: [
+          'diagnosis',
+          'digitalAssessmentCategory',
+          'digitalAssessmentDetails',
+          'intervention',
+          'investigator',
+          'keywords',
+          'reportedOutcome',
+          'study',
+        ],
+      },
     },
   },
 }
 
-export const details: GenerateComponentsFromRowProps = {
-  sql,
-  entityId,
+export const details: DetailsPageProps = {
+  sql: studySql,
   synapseConfigArray: [
     {
       name: 'Markdown',
@@ -115,9 +118,10 @@ export const details: GenerateComponentsFromRowProps = {
     {
       name: 'Markdown',
       props: {},
-      injectMarkdown: false,
-      columnName: 'accessRequirements',
-      title: 'Access requirements',
+      injectMarkdown: true,
+      columnName: 'dataAccessInstructions',
+      title: 'Data Access',
+      className: 'PORTALS-1365',
     },
     {
       name: 'Markdown',
@@ -165,12 +169,11 @@ export const studyDetailPage: SynapseConfigArray = [
         title: 'study',
         link: 'id',
       },
-      sql,
-      entityId,
+      sql: studySql,
     },
   },
   {
-    name: 'GenerateComponentsFromRow',
+    name: 'DetailsPage',
     props: details,
   },
 ]

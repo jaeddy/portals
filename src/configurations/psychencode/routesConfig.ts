@@ -1,202 +1,193 @@
 import { GenericRoute } from 'types/portal-config'
-import {
-  publications,
-  files,
-  projects,
-  studies,
-  people,
-} from './synapseConfigs'
-import { SynapseConstants } from 'synapse-react-client'
-import {
-  studiesSql,
-  studyCardConfiguration,
-  studiesEntityId,
-} from './synapseConfigs/studies'
-import { facetAliases } from './synapseConfigs/commonProps'
-import { publicationSql } from './synapseConfigs/publications'
+import { studies, studyDetailPage } from './synapseConfigs/studies'
+import { publications } from './synapseConfigs/publications'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
-import loadingScreen from './loadingScreen'
-import { filesSql, filesEntityId } from './synapseConfigs/files'
-import {
-  publicationsCardConfiguration,
-  publicationEntityId,
-} from './synapseConfigs/publications'
-const homeLimit = 3
+import { grants, grantsDetailPage } from './synapseConfigs/grants'
+import { people } from './synapseConfigs/people'
+import { data } from './synapseConfigs/data'
+import { peopleSql, upsetplotSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
     synapseConfigArray: [
       {
-        name: 'Markdown',
+        name: 'Goals',
+        title: 'Portal Goals',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
         props: {
-          ownerId: 'syn21438192',
-          wikiId: '600054',
+          entityId: 'syn22315959',
         },
       },
       {
-        name: 'StatefulButtonControlWrapper',
-        title: 'EXPLORE PORTAL',
+        name: 'Markdown',
+        title: 'About the Portal',
+        centerTitle: true,
+        outsideContainerClassName: 'home-bg-dark home-spacer',
+        className: 'home-container-description',
         props: {
-          colors: ['#F06531', '#48ACDD', '#154C9A', '#96C647', '#F4A632'],
-          configs: [
-            {
-              name: 'Projects',
-              synapseConfigArray: [projects.homePageSynapseObject],
-            },
-            {
-              name: 'Studies',
-              synapseConfigArray: [studies.homePageSynapseObject],
-            },
-            {
-              name: 'Files',
-              synapseConfigArray: [files.homePageSynapseObject],
-            },
-            {
-              name: 'Publications',
-              synapseConfigArray: [publications.homePageSynapseObject],
-            },
-            {
-              name: 'People',
-              synapseConfigArray: [people.homePageSynapseObject],
-            },
-          ],
+          ownerId: 'syn21557271',
+          wikiId: '605319',
+        },
+      },
+      {
+        name: 'Markdown',
+        title: 'Featured Data',
+        outsideContainerClassName: '',
+        className: 'home-container-description',
+        centerTitle: true,
+        props: {
+          ownerId: 'syn21557271',
+          wikiId: '605308',
+        },
+      },
+      {
+        name: 'UpsetPlot',
+        className: 'whatThePlot',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
+        props: {
+          sql: upsetplotSql,
+          rgbIndex: 0,
+          maxBarCount: 20,
+          setName: '# Individuals per assay',
+          combinationName: '# Individuals',
+          summaryLinkText: 'EXPLORE ALL DATA',
+          summaryLink: '/Explore/Data',
+        },
+      },
+      {
+        name: 'UserCardListRotate',
+        title: 'Our People and Institutions',
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        centerTitle: true,
+        props: {
+          sql: `${peopleSql} where feature=true`,
+          count: 3,
+          summaryLink: 'Explore/People',
+          summaryLinkText: 'EXPLORE ALL PEOPLE',
+        },
+      },
+      {
+        name: 'Resources',
+        outsideContainerClassName: 'home-spacer',
+        title: 'Related Resources',
+        centerTitle: true,
+        props: {
+          entityId: 'syn22311127',
+        },
+      },
+      {
+        name: 'TableFeedCards',
+        title: 'What\'s New',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          tableEntityId: 'syn23629036',
+        },
+      },
+      {
+        name: 'Markdown',
+        outsideContainerClassName: '',
+        className: '',
+        props: {
+          ownerId: 'syn21557271',
+          wikiId: '605340',
         },
       },
     ],
   },
   {
-    name: 'Explore',
+    to: 'Explore',
     isNested: true,
     routes: [
       {
-        name: 'Projects',
-        to: '/Explore/Projects',
+        to: 'Studies',
+        isNested: true,
+        synapseConfigArray: [
+          {
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
+            props: {
+              ...routeButtonControlWrapperProps,
+              synapseConfig: studies,
+            },
+          },
+        ],
+        routes: [
+          {
+            to: 'DetailsPage',
+            isNested: false,
+            synapseConfigArray: studyDetailPage,
+          },
+        ],
+      },
+      {
+        to: 'Data',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: projects.explorePageSynapseObject,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: data,
             },
           },
         ],
       },
       {
-        name: 'Studies',
-        to: '/Explore/Studies',
-        isNested: false,
+        to: 'Grants',
+        isNested: true,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: studies.explorePageSynapseObject,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: grants,
             },
           },
         ],
-        programmaticRouteConfig: [
+        routes: [
           {
-            name: 'CardContainerLogic',
-            isOutsideContainer: true,
-            props: {
-              isHeader: true,
-              backgroundColor: '#407ba0',
-              entityId: studiesEntityId,
-              loadingScreen,
-              facetAliases,
-              ...studyCardConfiguration,
-              secondaryLabelLimit: Infinity,
-              sql: studiesSql,
-            },
+            to: 'DetailsPage',
+            isNested: false,
+            synapseConfigArray: grantsDetailPage,
           },
+        ],
+      },
+      {
+        to: 'Publications',
+        isNested: false,
+        synapseConfigArray: [
           {
-            name: 'QueryWrapperFlattened',
-            title: 'Data',
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              initQueryRequest: {
-                partMask:
-                  SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-                  SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-                  SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-                entityId: filesEntityId,
-                concreteType:
-                  'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-                query: {
-                  sql: filesSql,
-                  selectedFacets: [],
-                  isConsistent: true,
-                  limit: 25,
-                  offset: 0,
-                },
-              },
-              loadingScreen,
-              facetAliases,
-              rgbIndex: 1,
-              facet: 'consortium',
-              unitDescription: 'Files',
-              title: 'Study Files',
+              ...routeButtonControlWrapperProps,
+              synapseConfig: publications,
             },
           },
         ],
       },
       {
-        name: 'Files',
-        to: '/Explore/Files',
+        to: 'People',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: files.explorePageSynapseObject,
-            },
-          },
-        ],
-      },
-      {
-        name: 'Publications',
-        to: '/Explore/Publications',
-        isNested: false,
-        synapseConfigArray: [
-          {
-            ...routeButtonControlWrapperProps,
-            props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: publications.explorePageSynapseObject,
-            },
-          },
-        ],
-        programmaticRouteConfig: [
-          {
-            name: 'CardContainerLogic',
-            isOutsideContainer: true,
-            props: {
-              isHeader: true,
-              backgroundColor: '#407ba0',
-              entityId: publicationEntityId,
-              facetAliases,
-              ...publicationsCardConfiguration,
-              secondaryLabelLimit: Infinity,
-              sql: publicationSql,
-            },
-          },
-        ],
-      },
-      {
-        name: 'People',
-        to: '/Explore/People',
-        isNested: false,
-        synapseConfigArray: [
-          {
-            ...routeButtonControlWrapperProps,
-            props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: people.explorePageSynapseObject,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: people,
             },
           },
         ],
@@ -204,13 +195,13 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'DataAccess',
     displayName: 'Data Access',
-    to: '/DataAccess',
+    to: 'DataAccess',
     isNested: false,
     synapseConfigArray: [
       {
         name: 'Markdown',
+        title: 'Data Access',
         props: {
           ownerId: 'syn4921369',
           wikiId: '477467',
@@ -219,12 +210,12 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'About',
-    to: '/About',
+    to: 'About',
     isNested: false,
     synapseConfigArray: [
       {
         name: 'Markdown',
+        title: 'About',
         props: {
           ownerId: 'syn4921369',
           wikiId: '235539',

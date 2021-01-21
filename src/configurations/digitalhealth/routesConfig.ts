@@ -1,101 +1,144 @@
 import { GenericRoute } from 'types/portal-config'
-import { publications, studies, data, tools, projects } from './synapseConfigs'
+import { publications, studies, data, tools } from './synapseConfigs'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
 import { studyDetailPage } from './synapseConfigs/studies'
-import { projectDetailPage } from './synapseConfigs/projects'
+import { toolsDetailsLandingPage } from './synapseConfigs/tools'
+import { SynapseConstants } from 'synapse-react-client'
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
-    synapseConfigArray: [],
+    synapseConfigArray: [
+      {
+        name: 'Goals',
+        title: '',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
+        props: {
+          entityId: 'syn23518009',
+        },
+      },
+      {
+        name: 'FeaturedDataTabs',
+        title: 'Collections',
+        centerTitle: true,
+        outsideContainerClassName: 'home-bg-dark home-spacer',
+        props: {
+          sql:'SELECT * FROM syn21994974',
+          rgbIndex: 3,
+          configs:
+            [
+              {
+                title: 'Studies',
+                icon: SynapseConstants.FILE,
+                explorePagePath:'/Explore/Collections',
+                exploreObjectType:'Collections',
+                plotsConfig: {
+                  sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Validation Study\' OR "collectionType" = \'Interventional Study\' OR "collectionType" = \'Observational Study\' ) )',
+                  configs: [{
+                    facetsToPlot:['diagnosis', 'dataCollectionMethod','digitalAssessmentCategory', 'sensorType', 'devicePlatform' ],
+                  },]
+                },
+              },
+              {
+                title: 'Analysis',
+                icon: SynapseConstants.CHART2,
+                explorePagePath:'/Explore/Collections',
+                exploreObjectType:'Collections',
+                plotsConfig: {
+                  sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Analysis\' OR "collectionType" = \'Challenge\' ) )',
+                  configs: [{
+                    facetsToPlot:['diagnosis', 'dataCollectionMethod','digitalAssessmentCategory', 'sensorType', 'devicePlatform' ],
+                  },]
+                },
+              }
+            ]  
+          },
+      },
+      {
+        name: 'TableFeedCards',
+        title: 'What\'s New',
+        centerTitle: true,
+        props: {
+          tableEntityId: 'syn23520190',
+        },
+      },
+    ],
   },
   {
-    name: 'Explore',
+    to: 'Explore',
     isNested: true,
     routes: [
       {
-        name: 'Studies',
-        to: '/Explore/Studies',
+        to: 'Collections',
         isNested: true,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: studies.explorePageSynapseObject,
             },
           },
         ],
         routes: [
           {
-            name: 'DetailsPage',
-            to: 'Explore/Studies/DetailsPage',
+            to: 'DetailsPage',
             isNested: false,
             synapseConfigArray: studyDetailPage,
           },
         ],
       },
       {
-        name: 'Projects',
-        to: '/Explore/Projects',
-        isNested: true,
-        synapseConfigArray: [
-          {
-            ...routeButtonControlWrapperProps,
-            props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: projects.explorePageSynapseObject,
-            },
-          },
-        ],
-        routes: [
-          {
-            name: 'DetailsPage',
-            to: '/Explore/Projects/DetailsPage',
-            isNested: false,
-            synapseConfigArray: projectDetailPage,
-          },
-        ],
-      },
-      {
-        name: 'Data',
-        to: '/Explore/Data',
+        to: 'Data',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: data.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Tools',
-        to: '/Explore/Tools',
-        isNested: false,
+        to: 'Tools',
+        isNested: true,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: tools.explorePageSynapseObject,
             },
           },
         ],
+        routes: [
+          {
+            to: 'DetailsPage',
+            isNested: false,
+            synapseConfigArray: toolsDetailsLandingPage,
+          },
+        ],
       },
       {
-        name: 'Publications',
-        to: '/Explore/Publications',
+        to: 'Publications',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: publications.explorePageSynapseObject,
             },
           },
@@ -104,15 +147,15 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'About',
-    to: '/About',
+    to: 'About',
     isNested: false,
     synapseConfigArray: [
       {
         name: 'Markdown',
+        title: 'About',
+        className: 'AboutPage',
         props: {
-          ownerId: 'syn7080714',
-          wikiId: '470467',
+          ownerId: 'syn22130826',
         },
       },
     ],

@@ -1,10 +1,15 @@
 import { CardContainerLogicProps } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { QueryWrapperProps } from 'synapse-react-client/dist/containers/QueryWrapper'
 import { StackedBarChartProps } from 'synapse-react-client/dist/containers/StackedBarChart'
-import { QueryWrapperMenuProps } from 'synapse-react-client/dist/containers/QueryWrapperMenu'
 import { UserCardProps } from 'synapse-react-client/dist/containers/UserCard'
+import { ExternalFileHandleLinkProps } from 'synapse-react-client/dist/containers/ExternalFileHandleLink'
+import { UpsetPlotProps } from 'synapse-react-client/dist/containers/UpsetPlot'
+import { SynapsePlotProps } from 'synapse-react-client/dist/containers/widgets/SynapsePlot'
 import { MarkdownSynapseProps } from 'synapse-react-client/dist/containers/MarkdownSynapse'
-import { NewsFeedMenuProps } from 'synapse-react-client/dist/containers/NewsFeedMenu'
+import { GoalsProps } from 'synapse-react-client/dist/containers/home_page/goals/Goals'
+import { ProgramsProps } from 'synapse-react-client/dist/containers/home_page/programs/Programs'
+import { ResourcesProps } from 'synapse-react-client/dist/containers/home_page/resources/Resources'
+import { UserCardListRotateProps } from 'synapse-react-client/dist/containers/UserCardListRotate'
 import { SynapseFormSubmissionGridProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client/dist/containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import { SynapseFormWrapperProps } from 'synapse-react-client/dist/containers/synapse_form_wrapper/SynapseFormWrapper'
@@ -13,10 +18,17 @@ import { RouteButtonControlWrapperProps } from '../portal-components/RouteButton
 import { HomePageCardContainerProps } from '../portal-components/csbc-home-page/HomePageCardContainer'
 import { AboutPortalProps } from '../portal-components/csbc-home-page/AboutPortal'
 import { EcosystemProps } from '../portal-components/csbc-home-page/Ecosystem'
-import { TableWithSideFacetsProps } from '../portal-components/csbc-home-page/TableWithSideFacets'
-import { GenerateComponentsFromRowProps } from './portal-util-types'
-import { QueryWrapperFlattenedProps } from '../portal-components/QueryWrapperFlattened'
+import { DetailsPageProps } from './portal-util-types'
 import { StandaloneQueryWrapperProps } from '../portal-components/StandaloneQueryWrapper'
+import { StatefulButtonControlWrapperProps } from 'portal-components/StatefulButtonControlWrapper'
+import { ParticipantsBarPlotProps } from '../portal-components/crc-researcher/ParticipantsBarPlot'
+import { StatusLineChartProps } from '../portal-components/crc-researcher/StatusLineChart'
+import { SurveysCompletedPlotsProps } from 'portal-components/crc-researcher/SurveysCompletedPlots'
+import { ImageProps } from 'portal-components/Image'
+import { RssFeedCardsProps } from 'synapse-react-client/dist/containers/RssFeedCards'
+import { FeaturedDataTabsProps } from 'synapse-react-client/dist/containers/home_page/featured-data/FeaturedDataTabs'
+import { UserCardListGroupsProps } from 'synapse-react-client/dist/containers/home_page/people/UserCardListGroups'
+import { TableFeedCardsProps } from 'synapse-react-client/dist/containers/TableFeedCards'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -24,6 +36,7 @@ export type HomePageHeaderConfig = {
   title: string
   showBlur?: boolean
   centerText?: boolean
+  HeaderSvg?: any
 }
 
 // Generic SynapseConfigArray Representation -- maps each component to its props
@@ -37,19 +50,9 @@ type QueryWrapper = {
   props: QueryWrapperProps
 }
 
-// This should likely be placed in SRC
-type QueryWrapperFlattened = {
-  name: 'QueryWrapperFlattened'
-  props: QueryWrapperFlattenedProps
-}
-
 type StackedBarChart = {
   name: 'StackedBarChart'
   props: StackedBarChartProps
-}
-type QueryWrapperMenu = {
-  name: 'QueryWrapperMenu'
-  props: QueryWrapperMenuProps
 }
 
 type QueryWrapperPlotNav = {
@@ -72,9 +75,24 @@ type ThemesPlot = {
   props: ThemesPlotProps
 }
 
+type Goals = {
+  name: 'Goals'
+  props: GoalsProps
+}
+
+type Programs = {
+  name: 'Programs'
+  props: ProgramsProps
+}
+
+type Resources = {
+  name: 'Resources'
+  props: ResourcesProps
+}
+
 type StatefulButtonControl = {
   name: 'StatefulButtonControlWrapper'
-  props: any
+  props: StatefulButtonControlWrapperProps
 }
 
 type RouteButtonControl = {
@@ -82,9 +100,9 @@ type RouteButtonControl = {
   props: RouteButtonControlWrapperProps
 }
 
-type GenerateComponentsFromRow = {
-  name: 'GenerateComponentsFromRow'
-  props: GenerateComponentsFromRowProps
+type DetailsPage = {
+  name: 'DetailsPage'
+  props: DetailsPageProps
 }
 
 type ConsortiaGoals = {
@@ -112,18 +130,55 @@ type AboutPortal = {
   props: AboutPortalProps
 }
 
-type TableWithSideFacets = {
-  name: 'TableWithSideFacets'
-  props: TableWithSideFacetsProps
-}
-
 type DevelopedBySage = {
   name: 'DevelopedBySage'
   props: undefined
 }
 
+type ExternalFileHandleLink = {
+  name: 'ExternalFileHandleLink'
+  props: ExternalFileHandleLinkProps
+}
+type UpsetPlot = {
+  name: 'UpsetPlot'
+  props: UpsetPlotProps
+}
+type RssFeedCards = {
+  name: 'RssFeedCards'
+  props: RssFeedCardsProps
+}
+type TableFeedCards = {
+  name: 'TableFeedCards'
+  props: TableFeedCardsProps
+}
+type SynapsePlot = {
+  name: 'SynapsePlot'
+  props: SynapsePlotProps
+}
+type UserCardListRotate = {
+  name: 'UserCardListRotate'
+  props: UserCardListRotateProps
+}
+
+type Image = {
+  name: 'Image'
+  props: ImageProps
+}
+
+type FeaturedDataTabs = {
+  name: 'FeaturedDataTabs'
+  props: FeaturedDataTabsProps
+}
+type UserCardListGroups = {
+  name: 'UserCardListGroups'
+  props: UserCardListGroupsProps
+}
+
+
 type Metadata = {
   title?: string
+  centerTitle?: boolean
+  subtitle?: string
   link?: string
   style?: React.CSSProperties
   isOutsideContainer?: boolean
@@ -131,11 +186,7 @@ type Metadata = {
   className?: string
   // applied to outer most container of the object
   containerClassName?: string
-}
-
-type NewsFeedMenu = {
-  name: 'NewsFeedMenu'
-  props: NewsFeedMenuProps
+  outsideContainerClassName?: string
 }
 
 type SynapseFormWrapper = {
@@ -153,30 +204,56 @@ type StandaloneQueryWrapper = {
   props: StandaloneQueryWrapperProps
 }
 
+type ParticipantsBarPlot = {
+  name: 'ParticipantsBarPlot'
+  props: ParticipantsBarPlotProps
+}
+
+type StatusLineChart = {
+  name: 'StatusLineChart'
+  props: StatusLineChartProps
+}
+
+type SurveysCompletedPlots = {
+  name: 'SurveysCompletedPlots'
+  props: SurveysCompletedPlotsProps
+}
+
 export type SynapseConfig = (
   | StatefulButtonControl
   | RouteButtonControl
   | CardContainerLogic
   | StackedBarChart
   | QueryWrapper
-  | QueryWrapperFlattened
-  | QueryWrapperMenu
   | UserCard
   | Markdown
-  | GenerateComponentsFromRow
-  | NewsFeedMenu
+  | DetailsPage
   | SynapseFormWrapper
   | SynapseFormSubmissionsGrid
   | ConsortiaGoals
   | HomePageCardContainer
   | Ecosystem
   | AboutPortal
-  | TableWithSideFacets
   | DevelopedBySage
   | ThemesPlot
   | QueryWrapperPlotNav
   | FunderCards
   | StandaloneQueryWrapper
+  | ParticipantsBarPlot
+  | StatusLineChart
+  | SurveysCompletedPlots
+  | ExternalFileHandleLink
+  | Goals
+  | Programs
+  | Resources
+  | UpsetPlot
+  | UserCardListRotate
+  | SynapsePlot
+  | Image
+  | RssFeedCards
+  | FeaturedDataTabs
+  | UserCardListGroups
+  | TableFeedCards
 ) &
   Metadata
 export type SynapseConfigArray = SynapseConfig[]
@@ -188,12 +265,11 @@ export type HomeExploreConfig = {
 }
 
 interface RouteOptions {
-  name: string
   displayName?: string
   isNested: boolean
-  programmaticRouteConfig?: SynapseConfigArray
   hideRouteFromNavbar?: boolean
-  to?: string
+  to: string | undefined
+  target?: string | undefined
   link?: string
   icon?: string
   synapseConfigArray?: SynapseConfigArray
@@ -216,6 +292,7 @@ export type FooterConfig = {
   contactUs?: string
   termsOfService: string
   forum?: string
+  about?: string
 }
 // Footer end
 
@@ -233,9 +310,3 @@ export type LogoConfig = {
   hideLogin?: boolean
 }
 // LogoConfig end
-
-export type BetaBanner = {
-  name?: string
-  originalSite?: string
-  backgroundColor?: string
-}

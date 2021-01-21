@@ -1,5 +1,5 @@
 import { SynapseConstants } from 'synapse-react-client'
-import loadingScreen from '../loadingScreen'
+
 import { HomeExploreConfig } from 'types/portal-config'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 
@@ -17,50 +17,41 @@ const publicationSchema: GenericCardSchema = {
 }
 export const publications: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       rgbIndex,
       facet,
       unitDescription,
-      initQueryRequest: {
-        entityId: 'syn10923842',
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql,
     },
   },
   explorePageSynapseObject: {
-    name: 'QueryWrapperMenu',
+    name: 'QueryWrapperPlotNav',
     props: {
-      unitDescription,
-      entityId: 'syn10923842',
-      stackedBarChartConfiguration: {
-        loadingScreen,
-      },
-      name: 'Publications',
+      rgbIndex,
       cardConfiguration: {
         type: SynapseConstants.GENERIC_CARD,
         genericCardSchema: publicationSchema,
       },
-      menuConfig: [
-        {
-          sql,
-          facet: 'Theme',
-        },
-        {
-          sql,
-          facet: 'diseaseType',
-        },
-      ],
-      rgbIndex: 1,
+      sql,
+      shouldDeepLink: true,
+      name: 'Publications',      
+      searchConfiguration: {
+        searchable: [
+          'publicationTitle',
+          'authors',
+          'journal',
+          'doi',
+          'pubMedId',
+          'keywords',
+          'tummorType',
+          'tissue',
+          'assay',
+          'grantName',
+          'grantNumber',
+          'dataset',
+        ],
+      },
     },
-  },
+  }
 }

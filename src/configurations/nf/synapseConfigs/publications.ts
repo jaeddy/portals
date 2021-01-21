@@ -2,12 +2,10 @@ import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig } from 'types/portal-config'
 import { facetAliases } from './commonProps'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import loadingScreen from '../loadingScreen'
 
-const sql = 'SELECT * FROM syn16857542'
-export const publicationsSql = sql
-export const publicationsEntityId = 'syn16857542'
-export const entityId = publicationsEntityId
+import { publicationsSql } from '../resources'
+
+export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
 const unitDescription = 'Publications'
 const rgbIndex = 0
@@ -38,31 +36,17 @@ export const publicationsCardConfiguration: CardConfiguration = {
       'doi',
     ],
   },
-  loadingScreen,
 }
 
 const publications: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       unitDescription,
       rgbIndex,
       link: 'Explore/Publications',
       linkText: 'Explore Publications',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: publicationsSql,
       facet: 'diseaseFocus',
     },
   },
@@ -70,61 +54,24 @@ const publications: HomeExploreConfig = {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
-      loadingScreen,
-      sql,
+      sql: publicationsSql,
       shouldDeepLink: true,
       name: 'Publications',
       cardConfiguration: publicationsCardConfiguration,
-      facetsToPlot: [
-        'fundingAgency',
-        'journal',
-        'year',
-        'studyName',
-        'diseaseFocus',
-        'manifestation',
-      ],
       facetAliases,
-      // searchConfiguration: {
-      //   searchable: [
-      //     {
-      //       columnName: 'title',
-      //       hintText: 'Schwann',
-      //     },
-      //     {
-      //       columnName: 'author',
-      //       hintText: 'Weimer',
-      //     },
-      //     {
-      //       columnName: 'journal',
-      //       hintText: 'neuro',
-      //     },
-      //     {
-      //       columnName: 'pmid',
-      //       hintText: '29055717',
-      //     },
-      //     {
-      //       columnName: 'year',
-      //       hintText: '2018',
-      //     },
-      //     {
-      //       columnName: 'fundingAgency',
-      //       hintText: 'NTAP',
-      //     },
-      //     {
-      //       columnName: 'studyName',
-      //       hintText: 'Plexiform',
-      //     },
-      //     {
-      //       columnName: 'diseaseFocus',
-      //       hintText: 'Neurofibromatosis 2',
-      //     },
-      //     {
-      //       columnName: 'manifestation',
-      //       hintText: 'MPNST',
-      //     },
-      //   ],
-      // },
+      searchConfiguration: {
+        searchable: [
+          'title',
+          'author',
+          'journal',
+          'pmid',
+          'year',
+          'fundingAgency',
+          'studyName',
+          'diseaseFocus',
+          'manifestation',
+        ],
+      },
     },
   },
 }

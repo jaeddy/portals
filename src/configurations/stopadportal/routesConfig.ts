@@ -2,8 +2,7 @@ import { GenericRoute } from 'types/portal-config'
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
     synapseConfigArray: [
       {
@@ -17,9 +16,8 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'Apply',
-    to: '/Apply',
-    isNested: false,
+    to: 'Apply',
+    isNested: true,
     synapseConfigArray: [
       {
         name: 'Markdown',
@@ -31,35 +29,40 @@ const routes: GenericRoute[] = [
       {
         name: 'SynapseFormSubmissionsGrid',
         props: {
-          pathpart: '/Apply',
+          pathpart: '/Apply/FormSubmission',
           formGroupId: '9',
           itemNoun: 'Compound',
           formClass: 'drug-upload-tool',
         },
       },
     ],
-    programmaticRouteConfig: [
+    routes: [
       {
-        name: 'SynapseFormWrapper',
-        props: {
-          formSchemaEntityId: 'syn20680102',
-          fileNamePath: 'naming.compound_name',
-          formUiSchemaEntityId: 'syn20693568',
-          formNavSchemaEntityId: 'syn20680027',
-          formTitle: 'Your Submission',
-          formClass: 'drug-upload-tool',
-        },
+        isNested: false,
+        hideRouteFromNavbar: true,
+        to: 'FormSubmission',
+        synapseConfigArray: [
+          {
+            name: 'SynapseFormWrapper',
+            props: {
+              formSchemaEntityId: 'syn20680102',
+              fileNamePath: 'naming.compound_name',
+              formUiSchemaEntityId: 'syn20693568',
+              formNavSchemaEntityId: 'syn20680027',
+              formTitle: 'Your Submission',
+              formClass: 'drug-upload-tool',
+            },
+          },
+        ],
       },
     ],
   },
   {
-    name: 'Help',
-    to: '/Help',
+    to: 'Help',
     isNested: true,
     routes: [
       {
-        name: 'How It Works',
-        to: '/Help/How It Works',
+        to: 'How It Works',
         isNested: false,
         synapseConfigArray: [
           {
@@ -73,8 +76,7 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        name: 'Data Requirements',
-        to: '/Help/Data Requirements',
+        to: 'Data Requirements',
         isNested: false,
         synapseConfigArray: [
           {
@@ -90,8 +92,7 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'Terms',
-    to: '/Terms',
+    to: 'Terms',
     isNested: false,
     hideRouteFromNavbar: true,
     synapseConfigArray: [
@@ -106,8 +107,7 @@ const routes: GenericRoute[] = [
   },
   // https://www.synapse.org/#!Synapse:syn20717442/wiki/596047
   {
-    name: 'Contact Us',
-    to: '/Contact Us',
+    to: 'Contact Us',
     isNested: false,
     hideRouteFromNavbar: true,
     synapseConfigArray: [

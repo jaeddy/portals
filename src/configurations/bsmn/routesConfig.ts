@@ -2,70 +2,96 @@ import { GenericRoute } from 'types/portal-config'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
 import projects, {
   projectCardConfiguration,
-  projectsSql,
-  projectsEntityId,
   projectsDetailsPageConfiguration,
 } from './synapseConfigs/projects'
 import studies, {
   studyCardConfiguration,
-  studiesSql,
-  studiesEntityId,
   studiesDetailPageConfiguration,
 } from './synapseConfigs/studies'
 import publications from './synapseConfigs/publications'
 import tools from './synapseConfigs/tools'
 import people from './synapseConfigs/people'
+import { studiesSql, projectsSql } from './resources'
+import {SynapseConstants} from "synapse-react-client";
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
     synapseConfigArray: [
       {
+        title: 'About the Portal',
+        centerTitle: true,
         name: 'Markdown',
         props: {
           ownerId: 'syn21645000',
         },
       },
       {
-        name: 'RouteButtonControlWrapper',
-        title: 'EXPLORE',
+        name: 'Goals',
+        outsideContainerClassName: 'home-spacer',
         props: {
-          customRoutes: [
-            'Projects',
-            'Studies',
-            'Tools',
-            'People',
-            'Publications',
+          entityId: 'syn23021143',
+        },
+      },
+      {
+        name: 'UserCardListGroups',
+        title: 'Grants and Principal Investigators',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          sql: 'SELECT * FROM syn21781196 WHERE isFeatured=\'true\'',
+          columnName: 'Project Title',
+          facetValues: [
+            'Somatic Mosaicism in the brain of Tourette syndrome',
+            'Somatic Mosaicism in Schizophrenia and Control Brains',
+            '1/3-Schizophrenia Genetics and Brain Somatic Mosaicism',
+            '2/3-Schizophrenia Genetics and Brain Somatic Mosaicism',
+            '3/3-Schizophrenia Genetics and Brain Somatic Mosaicism',
+            'Role of brain somatic mosaicism in autism, schizophrenia, and bipolar disorder',
+            'Mosaicism in focal cortical dysplasias spectrum seen in neuropsychiatric disease',
+            '1/2-Somatic mosaicism and autism spectrum disorder',
+            '2/2-Somatic mosaicism and autism spectrum disorder',
           ],
-          colors: ['#D46D1E', '#5BB0B5', '#58A148', '#47337D', '#109488'],
+          size: SynapseConstants.MEDIUM_USER_CARD,
+          useQueryResultUserData: true,
+          summaryLinkText:'EXPLORE ALL PEOPLE',
+          summaryLink: '/Explore/People',
+          count: 6
+        }
+      },
+      {
+        title: 'Acknowledgement',
+        centerTitle: true,
+        name: 'Markdown',
+        props: {
+          ownerId: 'syn23308351',
         },
       },
     ],
   },
   {
-    name: 'Explore',
+    to: 'Explore',
     isNested: true,
     routes: [
       {
-        name: 'Projects',
-        to: '/Explore/Projects',
+        to: 'Projects',
         isNested: true,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: projects.explorePageSynapseObject,
             },
           },
         ],
         routes: [
           {
-            name: 'DetailsPage',
             isNested: false,
-            to: 'Explore/Projects/DetailsPage',
+            to: 'DetailsPage',
             synapseConfigArray: [
               {
                 name: 'CardContainerLogic',
@@ -74,14 +100,13 @@ const routes: GenericRoute[] = [
                   isHeader: true,
                   ...projectCardConfiguration,
                   sql: projectsSql,
-                  entityId: projectsEntityId,
                   isAlignToLeftNav: true,
                   secondaryLabelLimit: Infinity,
                   backgroundColor: '#5bb0b5',
                 },
               },
               {
-                name: 'GenerateComponentsFromRow',
+                name: 'DetailsPage',
                 props: projectsDetailsPageConfiguration,
               },
             ],
@@ -89,22 +114,22 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        name: 'Studies',
-        to: '/Explore/Studies',
+        to: 'Data',
         isNested: true,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: studies.explorePageSynapseObject,
             },
           },
         ],
         routes: [
           {
-            name: 'DetailsPage',
-            to: '/Explore/Studies/DetailsPage',
+            to: 'DetailsPage',
             isNested: false,
             synapseConfigArray: [
               {
@@ -113,15 +138,15 @@ const routes: GenericRoute[] = [
                 props: {
                   isHeader: true,
                   ...studyCardConfiguration,
+                  titleLinkConfig: undefined,
                   sql: studiesSql,
-                  entityId: studiesEntityId,
                   isAlignToLeftNav: true,
                   secondaryLabelLimit: Infinity,
                   backgroundColor: '#5bb0b5',
                 },
               },
               {
-                name: 'GenerateComponentsFromRow',
+                name: 'DetailsPage',
                 props: studiesDetailPageConfiguration,
               },
             ],
@@ -129,42 +154,45 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        name: 'Tools',
-        to: '/Explore/Tools',
+        to: 'Tools',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: tools.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'People',
-        to: '/Explore/People',
+        to: 'People',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: people.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Publications',
-        to: '/Explore/Publications',
+        to: 'Publications',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: publications.explorePageSynapseObject,
             },
           },
@@ -173,8 +201,7 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'About',
-    to: '/About',
+    to: 'About',
     isNested: false,
     synapseConfigArray: [
       {

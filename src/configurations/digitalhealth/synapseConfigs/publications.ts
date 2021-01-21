@@ -1,20 +1,15 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig } from 'types/portal-config'
-import loadingScreen from '../loadingScreen'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import {
   CardConfiguration,
   CardContainerLogicProps,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
-
-const sql = 'SELECT * FROM syn22017695'
-export const publicationEntityId = 'syn22017695'
-const entityId = publicationEntityId
-export const publicationSql = sql
+import { publicationSql } from '../resources'
 
 const rgbIndex = 7
 const unitDescription = 'Publications'
-const facet = 'study'
+const facet = 'Study'
 
 export const publicationSchema: GenericCardSchema = {
   type: SynapseConstants.PUBLICATION,
@@ -26,6 +21,7 @@ export const publicationSchema: GenericCardSchema = {
     'doi',
     'PMID',
     'Study',
+    'Tools',
     'sensorType',
     'digitalAssessmentCategory',
   ],
@@ -35,32 +31,36 @@ export const publicationSchema: GenericCardSchema = {
 export const publicationCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: publicationSchema,
-  loadingScreen,
+  labelLinkConfig: [
+    {
+      matchColumnName: 'Tools',
+      URLColumnName: 'softwareName',
+      baseURL: 'Explore/Tools/DetailsPage',
+      isMarkdown: false,
+    },
+    {
+      matchColumnName: 'studyOrProject',
+      isMarkdown: true,
+    },
+    {
+      matchColumnName: 'Study',
+      isMarkdown: false,
+      baseURL: 'Explore/Collections/DetailsPage',
+      URLColumnName: 'study',
+    },
+  ],
 }
 
 export const publications: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       rgbIndex,
       facet,
       unitDescription,
-      loadingScreen,
       link: 'Explore/Files',
       linkText: 'Explore Files',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: publicationSql,
     },
   },
   explorePageSynapseObject: {
@@ -69,19 +69,29 @@ export const publications: HomeExploreConfig = {
       rgbIndex,
       shouldDeepLink: true,
       hideDownload: true,
-      sql,
-      entityId,
+      sql: publicationSql,
       name: 'Publications',
       cardConfiguration: publicationCardConfiguration,
-      loadingScreen,
       visibleColumnCount: Infinity,
+      searchConfiguration: {
+        searchable: [
+          'Author',
+          'Diagnosis',
+          'Journal',
+          'Title',
+          'Year',
+          'digitalAssessmentCategory',
+          'sensorType',
+          'Tools',
+          'Study',
+        ],
+      },
     },
   },
 }
 
 export const publicationDetailPageProps: CardContainerLogicProps = {
   sql: publicationSql,
-  entityId: publicationEntityId,
   ...publicationCardConfiguration,
   sqlOperator: 'LIKE',
 }

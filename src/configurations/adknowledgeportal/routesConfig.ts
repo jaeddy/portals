@@ -7,114 +7,153 @@ import {
   people,
   programs,
   publications,
-  tools,
-  news,
 } from './synapseConfigs'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
 import {
   studyCardConfiguration,
   studiesProgrammaticRouteConfig,
-  studiesSql,
 } from './synapseConfigs/studies'
-import {
-  projectCardConfiguration,
-  projectsSql,
-  projectsEntityId,
-} from './synapseConfigs/projects'
+import { projectCardConfiguration, projectsDetailsPageConfiguration } from './synapseConfigs/projects'
 import { results } from './synapseConfigs/results'
-import { iconHeaderOptions } from './synapseConfigs/programs/iconOptions'
-import loadingScreen from './loadingScreen'
-import { publicationProgrammatic } from './synapseConfigs/publications'
-import {
-  programCardConfiguration,
-  programEntityId,
-} from './synapseConfigs/programs'
-import { studiesEntityId } from './synapseConfigs/studies'
+import { iconHeaderOptions } from './synapseConfigs/iconOptions'
+import { programCardConfiguration } from './synapseConfigs/programs'
+import { programsHomePageConfig } from './synapseConfigs/programsHomePage'
+import experimentalTools from './synapseConfigs/experimental_tools'
+import computationalTools from './synapseConfigs/computational_tools'
+import { projectsSql, studiesSql, peopleSql } from './resources'
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
     synapseConfigArray: [
       {
-        name: 'StatefulButtonControlWrapper',
-        title: 'EXPLORE CONTENT',
+        name: 'Programs',
+        title: 'Programs',
+        centerTitle: true,
         props: {
-          configs: [
-            {
-              name: 'Projects',
-              synapseConfigArray: [projects.homePageSynapseObject],
-            },
-            {
-              name: 'Studies',
-              synapseConfigArray: [studies.homePageSynapseObject],
-            },
-            { name: 'Data', synapseConfigArray: [data.homePageSynapseObject] },
-            {
-              name: 'Publications',
-              synapseConfigArray: [publications.homePageSynapseObject],
-            },
-            {
-              name: 'People',
-              synapseConfigArray: [people.homePageSynapseObject],
-            },
-            {
-              name: 'Tools',
-              synapseConfigArray: [tools.homePageSynapseObject],
-            },
-            { name: 'Results', synapseConfigArray: [results] },
-          ],
-          colors: [
-            '#E5AE4C',
-            '#5BB0B5',
-            '#407BA0',
-            '#0F9488',
-            '#D4689A',
-            '#3C4A63',
-            '#407BA0',
-          ],
+          ...programsHomePageConfig,
         },
       },
       {
-        name: 'CardContainerLogic',
-        title: 'PROGRAMS',
+        name: 'FeaturedDataTabs',
+        title: 'Featured Data',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
         props: {
-          ...programs,
-          sql: 'SELECT * FROM syn17024173',
-          entityId: 'syn17024173',
+          sql:'select * from syn11346063',
+          rgbIndex: 3,
+          configs: [{
+            title: 'Human Studies',
+            icon: 'PERSON',
+            explorePagePath:'/Explore/Studies',
+            exploreObjectType:'Studies',
+            plotsConfig: {
+              configs: [{
+                title:'The Religious Orders and Memory and Aging Project Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'ROSMAP',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn3219045'
+              },
+              {
+                title:'The Mount Sinai Brain Bank Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'MSBB',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn3159438'
+              },
+              {
+                title:'The RNAseq Harmonization Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'rnaSeqReprocessing',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn9702085'
+              }]
+            }
+          },
+          {
+            title: 'Animal Model Studies',
+            icon: 'MOUSE',
+            explorePagePath:'/Explore/Studies',
+            exploreObjectType:'Studies',
+            plotsConfig: {
+              configs: [{
+                title:'The UCI MODEL-AD 5XFAD Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'UCI_5XFAD',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn16798076'
+              },
+              {
+                title:'The IU/Jax/Pitt MODEL-AD Primary Screen Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'Jax.IU.Pitt_PrimaryScreen',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn21595258'
+              },
+              {
+                title:'The IU/Jax/Pit MODEL-AD APOE/TREM2 Study',
+                facetsToPlot:['dataType', 'assay'],
+                selectFacetColumnName:'study',
+                selectFacetColumnValue:'Jax.IU.Pitt_APOE4.Trem2.R47H',
+                detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn17095980'
+              }
+            ]}
+          }]        
         },
       },
       {
-        name: 'Markdown',
-        title: "WHAT'S NEW",
-        className: 'whats-new',
+        name: 'UserCardListRotate',
+        title: 'Our People and Institutions',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
         props: {
-          ownerId: 'syn12666371',
-          wikiId: '582408',
+          sql: `${peopleSql} where isFeatured=true`,
+          count: 3,
+          size: SynapseConstants.MEDIUM_USER_CARD,
+          useQueryResultUserData: true,
+          summaryLink: 'Explore/People',
+          summaryLinkText: 'EXPLORE ALL PEOPLE',
         },
+      },
+      {
+        name: 'RssFeedCards',
+        title: 'What\'s New',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          url: 'https://news.adknowledgeportal.org',
+          itemsToShow:3,
+          allowCategories: ['Data Release', 'News', 'Webinar','rosMAP'],
+          mailChimpListName: 'AMP-AD quarterly newsletter',
+          mailChimpUrl:'https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&amp;id=96b614587a',
+          lockedFacet: {
+            value: 'what\'s-new'
+          }
+        }
       },
     ],
   },
   {
-    name: 'Explore',
+    to: 'Explore',
     isNested: true,
     routes: [
       {
-        name: 'Programs',
         isNested: true,
-        to: '/Explore/Programs',
+        to: 'Programs',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: {
                 name: 'CardContainerLogic',
                 props: {
                   ...programs,
                   sql: 'SELECT  * FROM syn17024173',
-                  entityId: programEntityId,
                 },
               },
             },
@@ -122,17 +161,14 @@ const routes: GenericRoute[] = [
         ],
         routes: [
           {
-            name: 'DetailsPage',
             isNested: false,
-            to: '/Explore/Programs/DetailsPage',
+            to: 'DetailsPage',
             synapseConfigArray: [
               {
                 name: 'CardContainerLogic',
                 isOutsideContainer: true,
                 props: {
-                  loadingScreen,
                   sql: 'SELECT  * FROM syn17024173',
-                  entityId: programEntityId,
                   isHeader: true,
                   ...programCardConfiguration,
                   genericCardSchema: {
@@ -149,21 +185,27 @@ const routes: GenericRoute[] = [
                 props: {
                   ...projectCardConfiguration,
                   sql: projectsSql,
-                  entityId: projectsEntityId,
                 },
               },
+              {
+                name: 'CardContainerLogic',
+                title: 'Explore Studies',
+                props: {
+                  ...studyCardConfiguration,
+                  sql: studiesSql,
+                },
+              },
+
             ],
           },
         ],
       },
       {
-        name: 'Projects',
         isNested: true,
-        to: '/Explore/Projects',
+        to: 'Projects',
         routes: [
           {
-            name: 'DetailsPage',
-            to: 'Explore/Projects/DetailsPage',
+            to: 'DetailsPage',
             isNested: false,
             synapseConfigArray: [
               {
@@ -173,131 +215,135 @@ const routes: GenericRoute[] = [
                   sql: projectsSql,
                   isHeader: true,
                   ...projectCardConfiguration,
-                  entityId: projectsEntityId,
                   backgroundColor: '#DE9A1F',
                 },
               },
               {
-                name: 'CardContainerLogic',
-                props: {
-                  title: 'PEOPLE',
-                  sql:
-                    'SELECT ownerID as ownerId, firstName, lastName, institution FROM syn13897207',
-                  entityId: 'syn13897207',
-                  type: SynapseConstants.MEDIUM_USER_CARD,
-                },
+                name: 'DetailsPage',
+                props: projectsDetailsPageConfiguration,
               },
-              {
-                name: 'CardContainerLogic',
-                title: 'STUDIES',
-                props: {
-                  ...studyCardConfiguration,
-                  loadingScreen,
-                  entityId: studiesEntityId,
-                  sql: studiesSql,
-                },
-              },
-              publicationProgrammatic,
             ],
           },
         ],
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: projects.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Studies',
         isNested: true,
-        to: '/Explore/Studies',
+        to: 'Studies',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: studies.explorePageSynapseObject,
             },
           },
         ],
         routes: [
           {
-            name: 'DetailsPage',
-            to: 'Explore/Studies/DetailsPage',
+            to: 'DetailsPage',
             isNested: false,
             synapseConfigArray: studiesProgrammaticRouteConfig,
           },
         ],
       },
       {
-        name: 'Data',
         isNested: false,
-        to: '/Explore/Data',
+        to: 'Data',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: data.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Publications',
         isNested: false,
-        to: '/Explore/Publications',
+        to: 'Publications',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: publications.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'People',
         isNested: false,
-        to: '/Explore/People',
+        to: 'People',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: people.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Tools',
         isNested: false,
-        to: '/Explore/Tools',
+        to: 'Experimental Tools',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: tools.explorePageSynapseObject,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: experimentalTools.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Results',
         isNested: false,
-        to: '/Explore/Results',
+        to: 'Computational Tools',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: computationalTools.explorePageSynapseObject,
+            },
+          },
+        ],
+      },
+      {
+        isNested: false,
+        to: 'Results',
+        synapseConfigArray: [
+          {
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
+            props: {
+              ...routeButtonControlWrapperProps,
               synapseConfig: results,
             },
           },
@@ -306,15 +352,27 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'DataAccess',
+    isNested: false,
+    to: 'Analytical Workspace',
+    synapseConfigArray: [
+      {
+        name: 'Markdown',
+        props: {
+          ownerId: 'syn22300949',
+          wikiId: '604940',
+        },
+      },
+    ],
+  },
+  {
+    to: 'DataAccess',
     displayName: 'Data Access',
     isNested: true,
     routes: [
       {
-        name: 'Instructions',
         displayName: 'Getting Access to Data',
         isNested: false,
-        to: '/DataAccess/Instructions',
+        to: 'Instructions',
         synapseConfigArray: [
           {
             name: 'Markdown',
@@ -327,8 +385,7 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        name: 'DataUseCertificates',
-        to: '/DataAccess/DataUseCertificates',
+        to: 'DataUseCertificates',
         displayName: 'Data Use Certificates',
         isNested: false,
         synapseConfigArray: [
@@ -343,10 +400,9 @@ const routes: GenericRoute[] = [
         ],
       },
       {
-        name: 'AcknowledgementStatements',
         displayName: 'Acknowledging Data Use',
         isNested: false,
-        to: '/DataAccess/AcknowledgementStatements',
+        to: 'AcknowledgementStatements',
         synapseConfigArray: [
           {
             name: 'Markdown',
@@ -358,58 +414,80 @@ const routes: GenericRoute[] = [
           },
         ],
       },
+      {
+        displayName: 'Data Use Proposals',
+        isNested: false,
+        to: 'DataUseProposals',
+        synapseConfigArray: [
+          {
+            name: 'Markdown',
+            title: 'DATA USE PROPOSALS',
+            props: {
+              ownerId: 'syn2580853',
+              wikiId: '409843',
+            },
+          },
+        ],
+      },
     ],
   },
   // Uncomment to expose Contribute route (once research team is monitoring submissions)
-  // {
-  //   name: 'Contribute',
-  //   isNested: false,
-  //   to: '/Contribute',
-  //   synapseConfigArray: [
-  //     {
-  //       name: 'Markdown',
-  //       className: 'amp-project-component',
-  //       props: {
-  //         ownerId: 'syn12666371',
-  //         wikiId: '600033',
-  //       },
-  //     },
-  //     {
-  //       name: 'SynapseFormSubmissionsGrid',
-  //       props: {
-  //         pathpart: '/Contribute',
-  //         formGroupId: '11',
-  //         itemNoun: 'contribution-request',
-  //         formClass: 'contribution-request',
-  //       },
-  //     },
-  //   ],
-  //   programmaticRouteConfig: [
-  //     {
-  //       name: 'Markdown',
-  //       props: {
-  //         ownerId: 'syn12666371',
-  //         wikiId: '600034',
-  //       },
-  //     },
-  //     {
-  //       name: 'SynapseFormWrapper',
-  //       props: {
-  //         formSchemaEntityId: 'syn20692910',
-  //         fileNamePath: 'study.submission_name',
-  //         formUiSchemaEntityId: 'syn20692911',
-  //         formNavSchemaEntityId: 'syn20968007',
-  //         isWizardMode: true,
-  //         formTitle: 'Your Contribution Request',
-  //         formClass: 'contribution-request',
-  //       },
-  //     },
-  //   ],
-  // },
   {
-    name: 'About',
+    isNested: true,
+    to: 'Contribute',
+    synapseConfigArray: [
+      {
+        name: 'Markdown',
+        title: 'Contribute',
+        className: 'amp-project-component',
+        props: {
+          ownerId: 'syn12666371',
+          wikiId: '600033',
+        },
+      },
+      {
+        name: 'SynapseFormSubmissionsGrid',
+        props: {
+          pathpart: '/Contribute/FormSubmission',
+          formGroupId: '11',
+          itemNoun: 'contribution-request',
+          formClass: 'contribution-request',
+        },
+      },
+    ],
+    routes: [
+      {
+        isNested: false,
+        to: 'FormSubmission',
+        hideRouteFromNavbar: true,
+        synapseConfigArray: [
+          {
+            name: 'Markdown',
+            props: {
+              ownerId: 'syn12666371',
+              wikiId: '600034',
+            },
+          },
+          {
+            name: 'SynapseFormWrapper',
+            props: {
+              formSchemaEntityId: 'syn20692910',
+              fileNamePath: 'study.submission_name',
+              formUiSchemaEntityId: 'syn20692911',
+              formNavSchemaEntityId: 'syn20968007',
+              isWizardMode: true,
+              formTitle: 'Your Contribution Request',
+              formClass: 'contribution-request',
+            },
+          },
+        ],
+      },
+    ],
+  },
+  {
     isNested: false,
-    to: '/About',
+    to: 'About',
+    hideRouteFromNavbar: true,
     synapseConfigArray: [
       {
         name: 'Markdown',
@@ -422,11 +500,46 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'News',
-    to: '/News',
     isNested: false,
-    synapseConfigArray: news,
-    programmaticRouteConfig: news,
+    displayName: 'News',
+    to: undefined,
+    target: '_blank',
+    link: 'https://news.adknowledgeportal.org/',
+    synapseConfigArray: [],
+  },
+  {
+    to: 'Help',
+    isNested: true,
+    routes: [
+      {
+        isNested: false,
+        to: 'FAQ',
+        synapseConfigArray: [
+          {
+            name: 'Markdown',
+            title: 'FAQ',
+            props: {
+              ownerId: 'syn12666371',
+              wikiId: '605050',
+            },
+          },
+        ],
+      },
+      {
+        isNested: false,
+        displayName: 'Forum',
+        to: undefined,
+        link: 'https://www.synapse.org/#!Synapse:syn2580853/discussion/default',
+        synapseConfigArray: [],
+      },
+      {
+        isNested: false,
+        displayName: 'Contact Us',
+        to: undefined,
+        link: 'mailto:ampadportal@sagebionetworks.org',
+        synapseConfigArray: [],
+      },
+    ],
   },
 ]
 

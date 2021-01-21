@@ -6,7 +6,7 @@ import { SQLOperator } from 'synapse-react-client/dist/utils/functions/sqlFuncti
   implementation detail, not a core type that should be relied up in 
   the portal.
 */
-// The props for GenerateComponentsFromRowProps are kept here so that
+// The props for DetailsPageProps are kept here so that
 // the configuration files can import the type
 
 type ResolveSynId = {
@@ -21,17 +21,24 @@ type RowToPropTransform = {
   columnName?: string
   injectMarkdown?: boolean
   showTitleSeperator?: boolean
+  tabIndex?: number
 }
 
 export type RowSynapseConfig = SynapseConfig & RowToPropTransform
-export type GenerateComponentsFromRowProps = {
+export type DetailsPageProps = {
   showMenu?: boolean // default to true
   searchParams?: {
     [index: string]: string
   }
   sql: string
-  entityId: string
   token?: string
   synapseConfigArray: RowSynapseConfig[]
   sqlOperator?: SQLOperator
+  tabLayout?: DetailsPageTabProps[]
+}
+
+export type DetailsPageTabProps = {
+  title: string,
+  iconName: string,
+  cssClass?: string
 }

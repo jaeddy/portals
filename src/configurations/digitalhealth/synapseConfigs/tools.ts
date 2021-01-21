@@ -1,16 +1,13 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { HomeExploreConfig } from 'types/portal-config'
-import loadingScreen from '../loadingScreen'
+import { HomeExploreConfig, SynapseConfigArray } from 'types/portal-config'
 import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
 import {
   CardConfiguration,
   CardContainerLogicProps,
 } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import facetAliases from '../facetAliases'
-export const toolsSql = 'SELECT * FROM syn22014091'
-export const toolsEntityId = 'syn22014091'
-const entityId = toolsEntityId
-const sql = toolsSql
+import { toolsSql } from '../resources'
+
 const unitDescription = 'Tools'
 const rgbIndex = 3
 
@@ -32,46 +29,30 @@ export const toolsSchema: GenericCardSchema = {
 export const toolsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: toolsSchema,
-  loadingScreen,
 }
 
 export const tools: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       rgbIndex,
       unitDescription,
-      loadingScreen,
       facet: 'theme',
-      link: 'Explore/Studies',
-      linkText: 'Explore Studies',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      link: 'Explore/Collections',
+      linkText: 'Explore Collections',
+      sql: toolsSql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
       cardConfiguration: toolsCardConfiguration,
-      sql,
+      sql: toolsSql,
       hideDownload: true,
       shouldDeepLink: true,
       defaultColumn: 'softwareType',
       name: 'Tools',
-      loadingScreen,
       facetAliases,
       facetsToPlot: [
         'digitalAssessmentCategory',
@@ -80,14 +61,47 @@ export const tools: HomeExploreConfig = {
         'softwareLanguage',
         'softwareType',
       ],
+      searchConfiguration: {
+        searchable: [
+          'digitalAssessmentCategory',
+          'inputDataType',
+          'outputDataType',
+          'softwareAuthor',
+          'softwareName',
+        ],
+      },
     },
   },
 }
 
 export const toolsDetailPageProps: CardContainerLogicProps = {
-  sql,
-  entityId: toolsEntityId,
+  sql: toolsSql,
   ...toolsCardConfiguration,
   sqlOperator: 'LIKE',
   facetAliases,
 }
+
+export const toolsDetailsLandingPage: SynapseConfigArray = [
+  {
+    name: 'CardContainerLogic',
+    isOutsideContainer: true,
+    props: {
+      isHeader: true,
+      isAlignToLeftNav: true,
+      backgroundColor: '#5bb0b5',
+      ...toolsCardConfiguration,
+      titleLinkConfig: undefined,
+      facetAliases,
+      genericCardSchema: toolsSchema,
+      rgbIndex,
+      sql: toolsSql,
+    },
+  },
+  {
+    name: 'DetailsPage',
+    props: {
+      sql: toolsSql,
+      synapseConfigArray: [],
+    },
+  },
+]

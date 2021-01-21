@@ -12,8 +12,7 @@ const routes: GenericRoute[] = []
 
 routes[ABOUT_INDEX] = {
   isNested: false,
-  name: 'About',
-  to: '/About',
+  to: 'About',
   synapseConfigArray: [
     {
       title: 'About',
@@ -27,32 +26,29 @@ routes[ABOUT_INDEX] = {
 }
 
 routes[EXPLORE_INDEX] = {
-  name: 'Explore',
+  to: 'Explore',
   isNested: true,
   routes: [
     {
-      name: 'Data',
       isNested: false,
-      to: '/Explore/Data',
+      to: 'Data',
       synapseConfigArray: [studies.explorePageSynapseObject],
     },
     {
-      name: 'Publications',
       isNested: false,
-      to: '/Explore/Publications',
+      to: 'Publications',
       synapseConfigArray: [publications.explorePageSynapseObject],
     },
   ],
 }
 
 routes[ORGANIZATION_INDEX] = {
-  name: 'Organizations',
+  to: 'Organizations',
   isNested: true,
   routes: [
     {
-      name: 'Content',
       isNested: true,
-      to: '/Organizations/Content',
+      to: 'Content',
       synapseConfigArray: [
         {
           title: 'Grants',
@@ -71,16 +67,14 @@ routes[ORGANIZATION_INDEX] = {
               title: 'name',
               type: SynapseConstants.PUBLICATION,
             },
-            entityId: 'syn18488466',
             sql: `SELECT * FROM syn18488466 WHERE ( ( "featured" = 'TRUE' ) )`,
           },
         },
       ],
       routes: [
         {
-          name: 'Subcontent',
+          to: 'Subcontent',
           isNested: false,
-          to: '/Organizations/Content/Subcontent',
           synapseConfigArray: [
             {
               name: 'Markdown',
@@ -97,8 +91,7 @@ routes[ORGANIZATION_INDEX] = {
 }
 
 routes[HOME_INDEX] = {
-  name: 'Home',
-  to: '/',
+  to: '',
   isNested: false,
   synapseConfigArray: [
     {
@@ -106,8 +99,13 @@ routes[HOME_INDEX] = {
       name: 'StatefulButtonControlWrapper',
       props: {
         configs: [
-          studies.homePageSynapseObject.props,
-          publications.homePageSynapseObject.props,
+          {
+            name: 'testroute',
+            synapseConfigArray: [
+              studies.homePageSynapseObject,
+              publications.homePageSynapseObject,
+            ],
+          },
         ],
         colors: ['green', 'blue'],
       },
@@ -119,7 +117,6 @@ routes[HOME_INDEX] = {
       props: {
         sql: 'SELECT * FROM syn9630847',
         type: SynapseConstants.GENERIC_CARD,
-        entityId: 'syn9630847',
         genericCardSchema: {
           title: 'name',
           type: SynapseConstants.PUBLICATION,

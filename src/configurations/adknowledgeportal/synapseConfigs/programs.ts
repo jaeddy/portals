@@ -1,9 +1,6 @@
 import { SynapseConstants } from 'synapse-react-client'
-import { iconOptions } from './programs/iconOptions'
+import { iconOptions } from './iconOptions'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import loadingScreen from '../loadingScreen'
-
-export const programEntityId = 'syn17024173'
 
 export const programCardConfiguration: CardConfiguration = {
   iconOptions,
@@ -14,7 +11,6 @@ export const programCardConfiguration: CardConfiguration = {
     subTitle: 'Short Description',
     icon: 'Program',
   },
-  loadingScreen,
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Programs/DetailsPage',

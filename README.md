@@ -20,9 +20,66 @@ To run a portal locally, use the linkConfig script, which copies configuration f
 ./linkConfig.sh <portal-name>
 ```
 
+To run a portal with a local version of SRC run the following commands:
+
+```sh
+# In Synapse-React-Client/
+# Symlink the package itself as well as the local react, react-router, and react-router-dom packages
+$ yarn link
+$ cd node_modules/react
+$ yarn link
+$ cd ../react-router
+$ yarn link
+$ cd ../react-router-dom
+$ yarn link
+$ cd ../../
+$ yarn build # last step is to build the project
+
+# In portals/
+$ yarn link synapse-react-client
+$ yarn link react
+$ yarn link react-router
+$ yarn link react-router-dom
+$ ./linkConfig <portal-name>
+# Note that you can make changes in the SRC project and reflect
+# them in the portals by running yarn build again. The portals project
+# can continue to run as you make changes.
+```
+
+To unlink synapse react-client run `rm -r node_modules` and `yarn install`. You can also manually unlink the packages by using [yarn unlink](https://classic.yarnpkg.com/en/docs/cli/unlink/).
+
 # Build/Deploy Process
 
-The code thats run on jenkins is in `run.sh`
+Note - [Jenkins](http://build-system-portals.sagebase.org:8080/login) is accessible only through VPN, reach out to IT to set this up.
+
+## Automatic Updates to Staging
+
+When a pull request is merged, the following will occur:
+
+If `package.json` was updated all the staging websites will be built automatically.
+
+If any file under `src/configurations/portal-name/*` is updated then the staging site for **portal-name** will update.
+e.g. updating `src/configurations/adknoweldgeportal/routesConfig.ts` will update adknowledgeportal staging.
+
+## Jenkins Jobs
+
+Job Naming:
+Each portal has its own staging job, named `deploy-portalname-staging`, e.g. `deploy-cancercomplexity-staging`
+
+Making a new staging job
+
+- Copy one of the staging jobs
+- Change the `Source Code Management/Additional Behaviours/Included Regions` section to only include that portal's configuration folder.
+- Change the `Build/Execute Shell` section to build the portal
+
+## Deploy the Staging version to Production
+
+Run `deploy-portal-production` with parameters, using the portal's folder name, e.g. 'nf' or 'cancercomplexity'
+This will copy everything from the staging bucket to the production bucket for that portal.  Approval from the portal owner must be obtained before running this job.
+
+## Jenkins build script
+
+The code that is run on jenkins is in `run.sh`
 
 Usage:
 Sync current with staging:
@@ -30,3 +87,4 @@ Sync current with staging:
 
 Sync production with production:
 `$ ./run.sh WARNING-push-production [portal-name]`
+

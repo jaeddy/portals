@@ -1,20 +1,58 @@
-import { HomeExploreConfig, SynapseConfig } from 'types/portal-config'
-import { SynapseConstants } from 'synapse-react-client'
-import loadingScreen from '../loadingScreen'
+import { SynapseConfig } from 'types/portal-config'
 import facetAliases from '../facetAliases'
 import handleParticipantWorkflowChange from '../handleParticipantWorkflowChange'
 
 const rgbIndex = 0
-export const dataSql = `SELECT * FROM syn22084217 where WorkflowState = 'Uncategorized'`
-export const dataEntityId = 'syn22084217'
-const entityId = dataEntityId
+
+export const baseDataSqlColumns = `symptom, 
+    firstDayOfSymptoms, 
+    lastDayOfSymptoms,
+    worstDayOfSymptoms,
+    dontFeelBetter,
+    recoveryDateOfSymptoms,
+    stillHaveSymptoms,
+    testType,
+    feverHighest, 
+    otherSpecify, 
+    howWasItTreated,     
+    gender, 
+    age, 
+    ethnicity, 
+    zipcode, 
+    nasalSwabDate, 
+    nasalSwabResult, 
+    serumTestDate, 
+    serumTestResult, 
+    uploadDate,
+    healthCode,
+    recordId,
+    testLocation,
+    dataGroups,
+    how_heard,
+    allSurveysComplete`
+
+export const baseDataSqlFrom = ` FROM syn22154087 `
+export const baseDataSqlWhere = ` WHERE testLocation IN ('lab', 'home', 'noTest') AND dataGroups NOT HAS ('test_user') AND allSurveysComplete = 'TRUE' AND WorkflowState = `
+
+export const baseDataSql = `SELECT ${baseDataSqlColumns} ${baseDataSqlFrom} ${baseDataSqlWhere}  `
+
+export const allFacetsToPlot = [
+  'gender',
+  'ethnicity',
+  'testType',
+  'zipcode',
+  'symptom',
+  'testLocation',
+  'nasalSwabResult',
+  'serumTestResult',
+]
+export const dataSql = `${baseDataSql} 'Uncategorized'`
 const sql = dataSql
 
 export const uncategorized: SynapseConfig = {
   name: 'QueryWrapperPlotNav',
   props: {
     rgbIndex,
-    entityId,
     shouldDeepLink: true,
     sql,
     name: 'Uncategorized Participants',
@@ -22,28 +60,23 @@ export const uncategorized: SynapseConfig = {
     tableConfiguration: {
       isRowSelectionVisible: true,
     },
-    facetsToPlot: [
-      'COVID19TestType',
-      'Age',
-      'ZipCode',
-      'Sex',
-      'Ethnicity',  
-    ],
+    facetsToPlot: allFacetsToPlot,
     customControls: [
       {
-        buttonText: 'Select for blood draw',
+        buttonText: 'Select as potential',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: (async (event) => {
-          handleParticipantWorkflowChange(event, 'Selected')
-        }),
+        onClick: async (event) => {
+          handleParticipantWorkflowChange(event, 'Potential')
+        },
       },
       {
         buttonText: 'Hide from view',
         classNames: 'exampleClassNameToAddToButton',
-        onClick: (async (event) => {
+        onClick: async (event) => {
           handleParticipantWorkflowChange(event, 'Hidden')
-        }),
-      }]
+        },
+      },
+    ],
   },
 }
 

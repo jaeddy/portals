@@ -1,70 +1,138 @@
 import { GenericRoute } from 'types/portal-config'
-import { uncategorized, selected, invited, hidden } from './synapseConfigs'
+import {
+  uncategorized,
+  potential,
+  invited,
+  scheduled,
+  tested,
+  hidden,
+} from './synapseConfigs'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
-    synapseConfigArray: [],
+    synapseConfigArray: [
+      {
+        name: 'SurveysCompletedPlots',
+        isOutsideContainer: true,
+        props: {},
+      },
+      {
+        name: 'ParticipantsBarPlot',
+        isOutsideContainer: true,
+        props: {},
+      },
+      {
+        name: 'StatusLineChart',
+        isOutsideContainer: true,
+        props: {
+          style: { paddingTop: 10, paddingBottom: 50 },
+        },
+      },
+      {
+        name: 'SynapsePlot',
+        isOutsideContainer: false,
+        props: {
+          widgetparamsMapped: {
+            query:
+              'SELECT "date", CONTACT as "New accounts created", survey_1 as "Completed Survey 1", survey_2 as "Completed Survey 2", survey_3 as "Completed Survey 3", survey_4 as "Completed Survey 4" FROM syn22314856',
+            title: 'New Participants Per Survey Per Day',
+            xtitle: 'Date',
+            ytitle: 'Count',
+            type: 'scatter',
+            horizontal: 'true',
+            // xaxistype:,
+            showlegend: 'true',
+          },
+        },
+      },
+    ],
   },
   {
-    name: 'Explore',
     isNested: true,
-    to: '/',
+    to: 'Explore',
     routes: [
       {
-        name: 'Uncategorized',
-        to: '/Explore/Uncategorized',
+        to: '1. Uncategorized',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: uncategorized,
             },
           },
         ],
       },
       {
-        name: 'Selected',
-        to: '/Explore/Selected',
+        to: '2. Potential',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
             props: {
-              ...routeButtonControlWrapperProps.props,
-              synapseConfig: selected,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: potential,
             },
           },
         ],
       },
       {
-        name: 'Invited',
-        to: '/Explore/Invited',
+        to: '3. Invited',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: invited,
             },
           },
         ],
       },
       {
-        name: 'Hidden',
-        to: '/Explore/Hidden',
+        to: '4. Scheduled',
         isNested: false,
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
+              synapseConfig: scheduled,
+            },
+          },
+        ],
+      },
+      {
+        to: '5. Tested',
+        isNested: false,
+        synapseConfigArray: [
+          {
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            props: {
+              ...routeButtonControlWrapperProps,
+              synapseConfig: tested,
+            },
+          },
+        ],
+      },
+      {
+        to: 'Hidden',
+        isNested: false,
+        synapseConfigArray: [
+          {
+            name: 'RouteButtonControlWrapper',
+            title: 'EXPLORE',
+            props: {
+              ...routeButtonControlWrapperProps,
               synapseConfig: hidden,
             },
           },

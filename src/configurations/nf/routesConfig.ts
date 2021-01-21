@@ -9,149 +9,144 @@ import {
   funders,
 } from './synapseConfigs'
 import {
-  studiesSql,
+  newStudiesSql,
   studyHeaderIconOptions,
   studyCardConfiguration,
-  studiesEntityId,
   studiesDetailPage,
 } from './synapseConfigs/studies'
-import { datasetsSql } from './synapseConfigs/datasets'
-import {
-  publicationsSql,
-  publicationsCardConfiguration,
-  publicationsEntityId,
-} from './synapseConfigs/publications'
 import routeButtonControlWrapperProps from './routeButtonControlWrapperProps'
-import loadingScreen from './loadingScreen'
-import { ntap } from './synapseConfigs/organizationConfigs/ntap'
-import { dhartSpore } from './synapseConfigs/organizationConfigs/dhart-spore'
-import { ctf } from './synapseConfigs/organizationConfigs/ctf'
-import { cdmrp } from './synapseConfigs/organizationConfigs/cdmrp'
-import { buttonColors, facetAliases } from './synapseConfigs/commonProps'
-import { toolsSql, toolsCardConfiguration } from './synapseConfigs/tools'
-import { toolsEntityId } from './synapseConfigs/tools'
-import { gff } from './synapseConfigs/organizationConfigs/gff'
+import { facetAliases } from './synapseConfigs/commonProps'
+import { organizationDetailsPage } from './organizations'
+import { peopleSql } from './resources'
 
 const limit = 3
 
 const routes: GenericRoute[] = [
   {
-    name: 'Home',
-    to: '/',
+    to: '',
     isNested: false,
     synapseConfigArray: [
       {
-        name: 'StatefulButtonControlWrapper',
-        title: 'EXPLORE PORTAL',
+        name: 'Goals',
+        title: 'Portal Programs and Goals',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer',
         props: {
-          ...buttonColors,
-          configs: [
+          entityId: 'syn23516796',
+        },
+      },
+      {
+        name: 'CardContainerLogic',
+        title: 'New Studies',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        link: '/Explore/Studies',
+        props: {
+          limit,
+          facetAliases,
+          sql: newStudiesSql,          
+          ...studyCardConfiguration,
+        },
+      },
+      {
+        name: 'UserCardListRotate',
+        title: 'Data Contributor Spotlight',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
+        props: {
+          sql: `${peopleSql} where isFeatured=true`,
+          count: 3,
+          size: SynapseConstants.LARGE_USER_CARD,
+          useQueryResultUserData: true,
+          // summaryLink: 'Explore/People',
+          // summaryLinkText: 'EXPLORE ALL PEOPLE',
+        },
+      },
+      {
+        name: 'Ecosystem',
+        title: 'NF Grant Opportunities',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          config: [
             {
-              name: 'Studies',
-              synapseConfigArray: [studies.homePageSynapseObject],
+              title: 'Children\'s Tumor Foundation',
+              ownerId: 'syn5702691',
+              wikiId: '606577',
             },
             {
-              name: 'Datasets',
-              synapseConfigArray: [datasets.homePageSynapseObject],
+              title: 'Neurofibromatosis Therapeutic Acceleration Program',
+              ownerId: 'syn5702691',
+              wikiId: '606578',
             },
             {
-              name: 'Files',
-              synapseConfigArray: [files.homePageSynapseObject],
+              title: 'Gilbert Family Foundation',
+              ownerId: 'syn5702691',
+              wikiId: '606579',
             },
             {
-              name: 'Publications',
-              synapseConfigArray: [publications.homePageSynapseObject],
+              title: 'DoD CDMRP Neurofibromatosis Research Program',
+              ownerId: 'syn5702691',
+              wikiId: '606580',
             },
             {
-              name: 'Tools',
-              synapseConfigArray: [tools.homePageSynapseObject],
+              title: 'Neurofibromatosis Research Initiative',
+              ownerId: 'syn5702691',
+              wikiId: '606582',
             },
           ],
         },
       },
       {
         name: 'CardContainerLogic',
-        link: '/Explore/Studies',
+        title: 'Our Partners',
+        outsideContainerClassName: 'home-spacer',
+        centerTitle: true,
         props: {
-          limit,
-          facetAliases,
-          sql: studiesSql,
-          entityId: studiesEntityId,
-          title: 'NEW STUDIES',
-          ...studyCardConfiguration,
-        },
-      },
-      {
-        name: 'CardContainerLogic',
-        title: 'NEW PUBLICATIONS',
-        link: '/Explore/Publications',
-        props: {
-          limit,
-          facetAliases,
-          entityId: publicationsEntityId,
-          sql: publicationsSql,
-          ...publicationsCardConfiguration,
-        },
-      },
-      {
-        name: 'CardContainerLogic',
-        title: 'New Datasets',
-        link: '/Explore/Datasets',
-        props: {
-          limit,
-          facetAliases,
-          loadingScreen,
-          entityId: publicationsEntityId,
-          sql: datasetsSql,
-          type: SynapseConstants.DATASET,
-        },
-      },
-      {
-        name: 'CardContainerLogic',
-        title: 'TOOLS',
-        link: '/Explore/Tools',
-        props: {
-          limit,
-          facetAliases,
-          entityId: toolsEntityId,
-          ...toolsCardConfiguration,
-          sql: toolsSql,
-        },
-      },
-      {
-        name: 'CardContainerLogic',
-        title: 'ORGANIZATIONS',
-        props: {
-          loadingScreen,
-          facetAliases,
-          entityId: funders.entityId,
+              facetAliases,
           sql: funders.sql,
           type: funders.type,
         },
       },
-    ],
+      {
+        name: 'RssFeedCards',
+        title: 'What\'s New',
+        centerTitle: true,
+        outsideContainerClassName: 'home-spacer home-bg-dark',
+        props: {
+          url: 'https://news.nfdataportal.org',
+          itemsToShow:3,
+          allowCategories: ['Newsletter', 'Hackathon', 'Publication', 'Funding'],
+          // mailChimpListName: 'NF quarterly newsletter',
+          // mailChimpUrl:'https://sagebase.us7.list-manage.com/subscribe/post?u=abcdefghi...',
+          lockedFacet: {
+            value: 'featured'
+          }
+        }
+      },
+    ],    
   },
   {
-    name: 'Explore',
+    to: 'Explore',
     isNested: true,
     routes: [
       {
-        name: 'Studies',
         isNested: true,
-        to: '/Explore/Studies',
+        to: 'Studies',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: studies.explorePageSynapseObject,
             },
           },
         ],
         routes: [
           {
-            name: 'DetailsPage',
-            to: 'Explore/Studies/DetailsPage',
+            to: 'DetailsPage',
             isNested: false,
             synapseConfigArray: [
               {
@@ -161,7 +156,6 @@ const routes: GenericRoute[] = [
                   sqlOperator: '=',
                   isHeader: true,
                   backgroundColor: '#119488',
-                  entityId: studiesEntityId,
                   ...studyCardConfiguration,
                   facetAliases,
                   iconOptions: studyHeaderIconOptions,
@@ -170,65 +164,70 @@ const routes: GenericRoute[] = [
                 },
               },
               {
-                name: 'GenerateComponentsFromRow',
+                name: 'DetailsPage',
                 isOutsideContainer: false,
                 props: studiesDetailPage,
+                containerClassName: 'container-full-width',
               },
             ],
           },
         ],
       },
       {
-        name: 'Datasets',
         isNested: false,
-        to: '/Explore/Datasets',
+        to: 'Datasets',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: datasets.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Files',
         isNested: false,
-        to: '/Explore/Files',
+        to: 'Files',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: files.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Publications',
         isNested: false,
-        to: '/Explore/Publications',
+        to: 'Publications',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: publications.explorePageSynapseObject,
             },
           },
         ],
       },
       {
-        name: 'Tools',
         isNested: false,
-        to: '/Explore/Tools',
+        to: 'Tools',
         synapseConfigArray: [
           {
-            ...routeButtonControlWrapperProps,
+            name: 'RouteButtonControlWrapper',
+            title: 'Explore',
+            containerClassName: 'container-full-width',
             props: {
-              ...routeButtonControlWrapperProps.props,
+              ...routeButtonControlWrapperProps,
               synapseConfig: tools.explorePageSynapseObject,
             },
           },
@@ -237,13 +236,49 @@ const routes: GenericRoute[] = [
     ],
   },
   {
-    name: 'Organizations',
+    to: 'Organizations',
     isNested: true,
-    routes: [ctf, ntap, gff, dhartSpore, cdmrp],
+    routes: [
+      {
+        displayName: 'CTF',
+        to: 'DetailsPage?abbreviation=CTF',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+      {
+        displayName: 'NTAP',
+        to: 'DetailsPage?abbreviation=NTAP',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+      {
+        displayName: 'GFF',
+        to: 'DetailsPage?abbreviation=GFF',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+      {
+        displayName: 'NCI DHART SPORE',
+        to: 'DetailsPage?fundingAgency=NIH-NCI',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+      {
+        displayName: 'CDMRP NFRP',
+        to: 'DetailsPage?abbreviation=CDMRP',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+      {
+        displayName: 'NFRI',
+        to: 'DetailsPage?abbreviation=NFRI',
+        isNested: false,
+        synapseConfigArray: organizationDetailsPage,
+      },
+    ],
   },
   {
-    name: 'About',
-    to: '/About',
+    to: 'About',
     isNested: false,
     synapseConfigArray: [
       {
@@ -255,6 +290,22 @@ const routes: GenericRoute[] = [
         },
       },
     ],
+  },
+  {
+    isNested: false,
+    displayName: 'News',
+    to: undefined,
+    target: '_blank',
+    link: 'https://news.nfdataportal.org/',
+    synapseConfigArray: [],
+  },
+  {
+    isNested: false,
+    displayName: 'Docs',
+    to: undefined,
+    target: '_blank',
+    link: 'https://nf-osi.github.io/',
+    synapseConfigArray: [],
   },
 ]
 

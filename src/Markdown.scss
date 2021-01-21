@@ -34,8 +34,7 @@
     padding: 0;
   }
 
-  // only select anchors without SRC-primary-button class
-  a:not(.SRC-primary-button),
+  a,
   details > summary {
     font-weight: 700;
     color: $primary-action-color;
@@ -69,6 +68,9 @@
       visibility: visible;
     }
   }
+  .text-align-center {
+    text-align: center;
+  }
 }
 
 // PORTALS-679
@@ -80,7 +82,7 @@
 }
 
 .markdown p a {
-  color: #4d5491; /* action color */
+  color: $primary-action-color; /* action color */
   font-weight: 700;
 }
 

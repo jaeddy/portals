@@ -1,5 +1,5 @@
 import { LogoConfig } from 'types/portal-config'
 const logo: LogoConfig = {
-  name: 'Digital Health Portal',
+  name: 'dHEALTH KNOWLEDGE PORTAL',
 }
 export default logo

@@ -14,13 +14,7 @@ const routeButtonControlProps: RouteButtonControlWrapperProps = {
   // this has to get overriden,
   synapseConfig: {} as SynapseConfig,
   colors,
-  customRoutes: ['Studies', 'Projects', 'Data', 'Tools', 'Publications'],
+  customRoutes: ['Collections', 'Data', 'Tools', 'Publications'],
 }
 
-const routeButtonControlTemplate: SynapseConfig = {
-  name: 'RouteButtonControlWrapper',
-  title: 'Explore',
-  props: routeButtonControlProps,
-}
-
-export default routeButtonControlTemplate
+export default routeButtonControlProps

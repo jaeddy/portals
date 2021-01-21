@@ -1,41 +1,24 @@
-import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig } from 'types/portal-config'
-import loadingScreen from '../loadingScreen'
-import { facetAliases } from './commonProps'
 
-const sql = 'SELECT * FROM syn16859580'
-export const datasetsEntityId = 'syn16859580'
-const entityId = datasetsEntityId
-export const datasetsSql = sql
+import { facetAliases } from './commonProps'
+import { datasetsSql } from '../resources'
+
+export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 const type = 'dataset'
 const unitDescription = 'datasets'
 const rgbIndex = 8
 
 const datasets: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       unitDescription,
       rgbIndex,
       facetAliases,
-      loadingScreen,
       link: 'Explore/Datasets',
       linkText: 'Explore Datasets',
       facet: 'diseaseFocus',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: datasetsSql,
     },
   },
   explorePageSynapseObject: {
@@ -43,15 +26,22 @@ const datasets: HomeExploreConfig = {
     props: {
       rgbIndex,
       shouldDeepLink: true,
-      sql,
+      sql: datasetsSql,
       cardConfiguration: {
         type,
       },
-      loadingScreen,
       name: 'Datasets',
-      entityId,
       facetAliases,
-      facetsToPlot: ['diseaseFocus', 'tumorType', 'fundingAgency'],
+      searchConfiguration: {
+        searchable: [
+          'datasetName',
+          'summary',
+          'studyName',
+          'diseaseFocus',
+          'manifestation',
+          'fundingAgency',
+        ],
+      },
     },
   },
 }

@@ -1,25 +1,24 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig } from 'types/portal-config'
-import { facetAliases } from './commonProps'
-import loadingScreen from '../loadingScreen'
+import { facetAliases, searchConfiguration } from './commonProps'
+
 import studyActiveSvg from '../style/study-active.svg'
 import studyCompleteSvg from '../style/study-complete.svg'
 import studyCompleteHeaderSvg from '../style/study-completed-header.svg'
 import studyActiveHeaderSvg from '../style/study-active-header.svg'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import { GenerateComponentsFromRowProps } from 'types/portal-util-types'
-import { datasetsSql, datasetsEntityId } from './datasets'
-import { toolsSql, toolsEntityId, toolsCardConfiguration } from './tools'
+import { DetailsPageProps } from 'types/portal-util-types'
+import { toolsCardConfiguration } from './tools'
+import { publicationsCardConfiguration } from './publications'
 import {
+  studiesSql,
+  toolsSql,
+  datasetsSql,
   publicationsSql,
-  publicationsEntityId,
-  publicationsCardConfiguration,
-} from './publications'
+  filesSql,
+} from '../resources'
 
-const sql = 'SELECT * FROM syn16787123'
-export const studiesEntityId = 'syn16787123'
-const entityId = studiesEntityId
-export const studiesSql = sql
+export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
 const unitDescription = 'Studies'
 const rgbIndex = 5
@@ -55,63 +54,62 @@ export const studyCardConfiguration: CardConfiguration = {
     baseURL: 'Explore/Studies/DetailsPage',
     URLColumnName: 'studyId',
     matchColumnName: 'studyId',
-  },
-  loadingScreen,
+  }
 }
 
 const studies: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       facetAliases,
       unitDescription,
       rgbIndex,
-      loadingScreen,
       link: 'Explore/Studies',
       linkText: 'Explore Studies',
       facet: 'diseaseFocus',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: studiesSql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
-      sql,
+      sql: studiesSql,
       name: 'Studies',
       shouldDeepLink: true,
       cardConfiguration: studyCardConfiguration,
       facetAliases,
-      facetsToPlot: [
-        'studyStatus',
-        'dataStatus',
-        'institutions',
-        'fundingAgency',
-        'manifestation',
-        'diseaseFocus',
-      ],
+      searchConfiguration: {
+        searchable: [
+          'studyName',
+          'summary',
+          'studyLeads',
+          'studyStatus',
+          'dataStatus',
+          'institutions',
+          'diseaseFocus',
+          'manifestation',
+          'fundingAgency',
+        ],
+      },
     },
   },
 }
 
-export const studiesDetailPage: GenerateComponentsFromRowProps = {
+export const studiesDetailPage: DetailsPageProps = {
   showMenu: true,
   sql: studiesSql,
-  entityId: studiesEntityId,
+  tabLayout: [
+    {
+      title: "Study Details",
+      iconName: "study",
+    },
+    {
+      title: "Study Data",
+      iconName: "database",
+      cssClass: "tab-database"
+    }
+  ],
   synapseConfigArray: [
     {
       name: 'Markdown',
@@ -119,6 +117,7 @@ export const studiesDetailPage: GenerateComponentsFromRowProps = {
       title: 'Access Requirements',
       injectMarkdown: true,
       props: {},
+      tabIndex: 0,
     },
     {
       name: 'Markdown',
@@ -126,6 +125,61 @@ export const studiesDetailPage: GenerateComponentsFromRowProps = {
       title: 'Acknowledgement Statements',
       injectMarkdown: true,
       props: {},
+      tabIndex: 0,
+    },
+    {
+      name: 'CardContainerLogic',
+      title: 'Tools',
+      columnName: 'studyId',
+      tableSqlKeys: ['studyId'],
+      props: {
+        sql: toolsSql,
+        ...toolsCardConfiguration,
+      },
+      tabIndex: 0,
+    },
+    {
+      name: 'CardContainerLogic',
+      title: 'Publications',
+      columnName: 'studyId',
+      tableSqlKeys: ['studyId'],
+      props: {
+        sql: publicationsSql,
+        ...publicationsCardConfiguration,
+      },
+      tabIndex: 0,
+    },
+    {
+      name: 'CardContainerLogic',
+      title: 'Related Studies',
+      columnName: 'relatedStudies',
+      tableSqlKeys: ['studyId'],
+      props: {
+        sqlOperator: 'LIKE',
+        sql: studiesSql,
+        ...studyCardConfiguration,
+      },
+      tabIndex: 0,
+    },
+    {
+      name: 'QueryWrapperPlotNav',
+      tabIndex: 1,
+      props: {
+        rgbIndex: 8,
+        shouldDeepLink: false,
+        sql: filesSql,
+        visibleColumnCount: 7,
+        sqlOperator: 'LIKE',
+        tableConfiguration: {
+          showAccessColumn: true,
+          showDownloadColumn: true,
+        },
+        name: 'Data Files',
+        facetAliases,
+        searchConfiguration,
+      },
+      tableSqlKeys: ['studyId'],
+      columnName: 'studyId',
     },
     {
       name: 'CardContainerLogic',
@@ -136,98 +190,22 @@ export const studiesDetailPage: GenerateComponentsFromRowProps = {
         sql: datasetsSql,
         sqlOperator: '=',
         type: 'dataset',
-        entityId: datasetsEntityId,
       },
+      tabIndex: 1,
     },
     {
-      name: 'QueryWrapperFlattened',
-      title: 'Data Files',
-      columnName: 'studyId',
-      tableSqlKeys: ['studyId'],
-      props: {
-        visibleColumnCount: 7,
-        initQueryRequest: {
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          entityId,
-          query: {
-            sql: `SELECT id, dataType, assay, diagnosis, tumorType, species, individualID, fileFormat, dataSubtype, nf1Genotype, nf2Genotype, fundingAgency, consortium FROM syn16858331 where resourceType = 'experimentalData'`,
-            limit: 25,
-            offset: 0,
-          },
-        },
-        loadingScreen,
-        rgbIndex,
-        title: 'Data Files',
-      },
-    },
-    {
-      name: 'QueryWrapperFlattened',
+      name: 'StandaloneQueryWrapper',
+      tabIndex: 1,
       title: 'Metadata Files',
       columnName: 'studyId',
       tableSqlKeys: ['studyId'],
       props: {
         visibleColumnCount: 7,
-        initQueryRequest: {
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          entityId,
-          query: {
-            sql: `SELECT id, dataType, assay, diagnosis, tumorType, species, individualID, fileFormat, dataSubtype, nf1Genotype, nf2Genotype, fundingAgency, consortium FROM syn16858331 where resourceType ='report'`,
-            limit: 25,
-            offset: 0,
-          },
-        },
-        loadingScreen,
-        rgbIndex,
+        sql: `SELECT id, dataType, assay, diagnosis, tumorType, species, individualID, fileFormat, dataSubtype, nf1Genotype, nf2Genotype, fundingAgency, consortium FROM syn16858331 where resourceType ='report'`,
+          rgbIndex,
         title: 'Metadata Files',
       },
-    },
-    {
-      name: 'CardContainerLogic',
-      title: 'Tools',
-      columnName: 'studyId',
-      tableSqlKeys: ['studyId'],
-      props: {
-        sql: toolsSql,
-        entityId: toolsEntityId,
-        ...toolsCardConfiguration,
-      },
-    },
-    {
-      name: 'CardContainerLogic',
-      title: 'Publications',
-      columnName: 'studyId',
-      tableSqlKeys: ['studyId'],
-      props: {
-        sql: publicationsSql,
-        entityId: publicationsEntityId,
-        ...publicationsCardConfiguration,
-      },
-    },
-    {
-      name: 'CardContainerLogic',
-      title: 'Related Studies',
-      columnName: 'relatedStudies',
-      tableSqlKeys: ['studyId'],
-      props: {
-        sqlOperator: 'LIKE',
-        sql: studiesSql,
-        entityId: studiesEntityId,
-        ...studyCardConfiguration,
-      },
+      className: 'metadata-table',
     },
   ],
 }

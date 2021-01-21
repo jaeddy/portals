@@ -1,20 +1,15 @@
 import { HomeExploreConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import loadingScreen from '../loadingScreen'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 import { MEDIUM_USER_CARD } from 'synapse-react-client/dist/utils/SynapseConstants'
+import { peopleSql } from '../resources'
 
 const unitDescription = 'People'
 const rgbIndex = 3
-export const peopleSql = 'SELECT * FROM syn21781196'
-export const peopleEntityId = 'syn21781196'
-const entityId = peopleEntityId
-const sql = peopleSql
 const facet = 'project'
 
 export const peopleCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
-  loadingScreen,
   genericCardSchema: {
     type: 'People',
     title: 'name',
@@ -33,46 +28,24 @@ export const peopleCardConfiguration: CardConfiguration = {
 
 const individuals: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       unitDescription,
       rgbIndex,
       facet,
-      loadingScreen,
       link: 'Explore/Individuals',
       linkText: 'Explore Individuals',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: peopleSql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
       shouldDeepLink: true,
       hideDownload: true,
-      // searchConfiguration: {
-      //   searchable: [
-      //     {
-      //       columnName: 'expertise',
-      //       hintText: 'genomics',
-      //     },
-      //   ],
-      // },
       name: 'People',
-      sql,
-      loadingScreen,
+      sql: peopleSql,
       cardConfiguration: {
         type: MEDIUM_USER_CARD,
       },

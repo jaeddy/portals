@@ -1,78 +1,70 @@
 import { SynapseConstants } from 'synapse-react-client'
 import { HomeExploreConfig } from 'types/portal-config'
-import loadingScreen from '../loadingScreen'
-import { GenericCardSchema } from 'synapse-react-client/dist/containers/GenericCard'
+import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
 
-const sql = 'SELECT * FROM syn18483791'
-const unitDescription = 'studies'
+const studiesSql = 'SELECT * FROM syn16787123'
+const type = SynapseConstants.GENERIC_CARD
+const unitDescription = 'Studies'
+const rgbIndex = 5
 
-const rgbIndex = 0
-const facet = 'tumorType'
-
-const studySchema: GenericCardSchema = {
-  type: SynapseConstants.STUDY,
-  title: 'name',
-  subTitle: 'centerName',
-  description: 'description',
-  secondaryLabels: [
-    'Theme',
-    'tumorType',
-    'experimentalStrategy',
-    'consortium',
-    'grantType',
-  ],
-  link: 'id',
+const studyCardConfiguration: CardConfiguration = {
+  type,
+  genericCardSchema: {
+    title: 'studyName',
+    type: SynapseConstants.STUDY,
+    description: 'summary',
+    subTitle: 'studyLeads',
+    icon: 'studyStatus',
+    secondaryLabels: [
+      'dataStatus',
+      'diseaseFocus',
+      'manifestation',
+      'fundingAgency',
+      'institutions',
+      'studyStatus',
+    ],
+  },
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Studies/DetailsPage',
+    URLColumnName: 'studyId',
+    matchColumnName: 'studyId',
+  }
 }
 
 export const studies: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
-      rgbIndex,
-      facet,
       unitDescription,
-      initQueryRequest: {
-        entityId: 'syn18483791',
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      rgbIndex,
+      link: 'Explore/Studies',
+      linkText: 'Explore Studies',
+      facet: 'diseaseFocus',
+      sql: studiesSql,
     },
   },
   explorePageSynapseObject: {
-    name: 'QueryWrapperMenu',
+    name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      unitDescription,
-      stackedBarChartConfiguration: {
-        loadingScreen,
+      sql: studiesSql,
+      name: 'Studies',
+      shouldDeepLink: true,
+      cardConfiguration: studyCardConfiguration,
+      searchConfiguration: {
+        searchable: [
+          'studyName',
+          'summary',
+          'studyLeads',
+          'studyStatus',
+          'dataStatus',
+          'institutions',
+          'diseaseFocus',
+          'manifestation',
+          'fundingAgency',
+        ],
       },
-      entityId: 'syn18483791',
-      cardConfiguration: {
-        type: SynapseConstants.GENERIC_CARD,
-        genericCardSchema: studySchema,
-      },
-      name: 'Data',
-      facetAliases: {
-        consortium: 'Program',
-      },
-      menuConfig: [
-        {
-          sql,
-          facet: 'grantType',
-        },
-        {
-          sql,
-          facet: 'consortium',
-        },
-      ],
     },
   },
 }

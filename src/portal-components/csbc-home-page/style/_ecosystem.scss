@@ -1,5 +1,4 @@
 .Ecosystem {
-  background-color: rgba(64, 123, 160, 0.05);
   padding-bottom: 50px;
   .header,
   .subtitle {
@@ -7,9 +6,8 @@
   }
   .header {
     margin-top: 63px;
-    color: $primary-text-color;
-    font-weight: bold;
-    font-size: 24px;
+    font-weight: 700;
+    font-size: 21px;
   }
   .subtitle {
     margin-bottom: 20px;
@@ -49,13 +47,6 @@
       padding-right: 20px;
     }
     .markdown {
-      p {
-        border-bottom: 1px solid #dcdcdc;
-        padding-bottom: 10px;
-        &:last-child {
-          border-bottom: 1px solid transparent;
-        }
-      }
       h4 {
         padding-top: 17px;
         margin-bottom: 10px;

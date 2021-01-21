@@ -1,27 +1,26 @@
 import { HomeExploreConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import loadingScreen from '../loadingScreen'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
+import { computationalSql, projectsSql, publicationsSql, studiesSql, toolSql, peopleSql } from '../resources'
+import { DetailsPageProps } from 'types/portal-util-types'
+import { studyCardConfiguration } from './studies'
+import { publicationCardProps } from './publications'
+import { experimentalToolsCardConfiguration } from './experimental_tools'
+import { computationalCardConfiguration } from './computational_tools'
 
 const unitDescription = 'Projects'
 const rgbIndex = 4
-export const projectsSql = 'SELECT * FROM syn17024229'
-export const projectsEntityId = 'syn17024229'
-const entityId = projectsEntityId
-const sql = projectsSql
 const facet = 'Program'
 
 export const projectCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
-  loadingScreen,
   genericCardSchema: {
     type: 'Project',
     title: 'Name',
-    subTitle: 'Key Investigators',
+    subTitle: 'Principal Investigators',
     description: 'Abstract',
     secondaryLabels: [
       'Institutions',
-      'Key Data Contributors',
       'Program',
       'Grant Number',
     ],
@@ -35,42 +34,98 @@ export const projectCardConfiguration: CardConfiguration = {
   },
 }
 
+export const projectsDetailsPageConfiguration: DetailsPageProps = {
+  showMenu: true,
+  sql: projectsSql,
+  synapseConfigArray: [
+    {
+      name: 'CardContainerLogic',
+      title: 'People',
+      columnName: 'Grant Number',
+      tableSqlKeys: ['Grant Number'],
+      props: {        
+        sql: peopleSql,
+        type: SynapseConstants.MEDIUM_USER_CARD,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      columnName: 'Grant Number',
+      title: 'Studies',
+      tableSqlKeys: ['Grant Number'],
+      props: {
+        ...studyCardConfiguration,
+        sql: studiesSql,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      columnName: 'Grant Number',
+      title: 'Publications',
+      showTitleSeperator: false,
+      tableSqlKeys: ['long_amp_ad_grants'],
+      props: {
+        sql: publicationsSql,
+        ...publicationCardProps,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      columnName: 'Grant Number',
+      title: 'Experimental Tools',
+      showTitleSeperator: false,
+      tableSqlKeys: ['grant'],
+      props: {
+        sql: toolSql,
+        ...experimentalToolsCardConfiguration,
+      },
+    },
+    {
+      name: 'CardContainerLogic',
+      columnName: 'Grant Number',
+      title: 'Computational Tools',
+      showTitleSeperator: false,
+      tableSqlKeys: ['grant'],
+      props: {
+        sql: computationalSql,
+        ...computationalCardConfiguration,
+      },
+    },
+
+  ],
+}
+
 const projects: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       unitDescription,
       rgbIndex,
       facet,
-      loadingScreen,
       link: 'Explore/Projects',
       linkText: 'Explore Projects',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          isConsistent: true,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: projectsSql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      loadingScreen,
-      entityId,
-      sql,
+      sql: projectsSql,
       shouldDeepLink: true,
       name: 'Projects',
       cardConfiguration: projectCardConfiguration,
       // unitDescription: 'Projects',
+      searchConfiguration: {
+        searchable: [
+          'Name',
+          'Grant Number',
+          'Program',
+          'Principal Investigators',
+          'Institutions',
+          'Abstract'
+        ],
+      },
     },
   },
 }

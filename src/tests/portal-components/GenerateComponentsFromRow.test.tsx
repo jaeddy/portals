@@ -1,5 +1,5 @@
 import { mount } from 'enzyme'
-import QueryWrapperFlattened from 'portal-components/QueryWrapperFlattened'
+import StandaloneQueryWrapper from 'portal-components/StandaloneQueryWrapper'
 import * as React from 'react'
 import { SynapseClient } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/dist/containers/MarkdownSynapse'
@@ -7,24 +7,18 @@ import {
   EntityHeader,
   PaginatedResults,
   QueryResultBundle,
+  EntityColumnType,
 } from 'synapse-react-client/dist/utils/synapseTypes/'
-import {
-  GenerateComponentsFromRowProps,
-  RowSynapseConfig,
-} from 'types/portal-util-types'
-import GenerateComponentsFromRow from '../../portal-components/GenerateComponentsFromRow'
+import { DetailsPageProps, RowSynapseConfig } from 'types/portal-util-types'
+import DetailsPage from '../../portal-components/DetailsPage'
 const injectPropsIntoConfig = require('portal-components/injectPropsIntoConfig')
 
-const createMountedComponent = async (
-  props: GenerateComponentsFromRowProps,
-) => {
-  const wrapper = await mount<GenerateComponentsFromRow>(
-    <GenerateComponentsFromRow {...props} />,
-  )
+const createMountedComponent = async (props: DetailsPageProps) => {
+  const wrapper = await mount<DetailsPage>(<DetailsPage {...props} />)
   return wrapper
 }
 
-describe('GenerateComponentsFromRowProps works', () => {
+describe('DetailsPageProps works', () => {
   // ---- MARKDOWN COMPONENT PROPS SETUP ----
   const MARKDOWN_COL_TEST_NAME = 'MARKDOWN_COL_TEST_NAME'
   const MARKDOWN_ROW_TEST_VALUE = 'syn123'
@@ -57,23 +51,14 @@ describe('GenerateComponentsFromRowProps works', () => {
   const TABLE_COL_TEST_NAME = 'TABLE_COL_TEST_NAME'
   const TABLE_ROW_TEST_VALUE = 'TABLE_ROW_TEST_VALUE'
   const tableSynapseConfig: RowSynapseConfig = {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     columnName: TABLE_COL_TEST_NAME,
     title: 'title',
     props: {
-      initQueryRequest: {
-        entityId: 'syn11346063',
-        partMask: 0,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        query: {
-          sql: 'SELECT * FROM syn11346063',
-          limit: 25,
-          offset: 0,
-        },
-      },
-      synapseId: 'syn',
+      sql: 'SELECT * FROM syn11346063',
       unitDescription: '',
       title: 'title',
+      rgbIndex: 0,
     },
   }
   // ---- TABLE COMPONENT PROPS END ----
@@ -91,17 +76,17 @@ describe('GenerateComponentsFromRowProps works', () => {
         etag: '',
         headers: [
           {
-            columnType: 'STRING',
+            columnType: EntityColumnType.STRING,
             name: MARKDOWN_COL_TEST_NAME,
             id: '',
           },
           {
-            columnType: 'STRING',
+            columnType: EntityColumnType.STRING,
             name: MARKDOWN_COL_MULTI_VALUE_TEST_NAME,
             id: '',
           },
           {
-            columnType: 'STRING',
+            columnType: EntityColumnType.STRING,
             name: TABLE_COL_TEST_NAME,
             id: '',
           },
@@ -149,7 +134,7 @@ describe('GenerateComponentsFromRowProps works', () => {
   // ---- COMPONENT PROPS DATA END ----
 
   const spyOnInject = jest.spyOn(injectPropsIntoConfig, 'default')
-  const props: GenerateComponentsFromRowProps = {
+  const props: DetailsPageProps = {
     searchParams: {
       study: 'syn',
     },
@@ -184,7 +169,7 @@ describe('GenerateComponentsFromRowProps works', () => {
     props.synapseConfigArray = [tableSynapseConfig]
     const wrapper = await createMountedComponent(props)
     await wrapper.update()
-    expect(wrapper.find(QueryWrapperFlattened)).toHaveLength(1)
+    expect(wrapper.find(StandaloneQueryWrapper)).toHaveLength(1)
     expect(spyOnInject).toHaveBeenCalled()
     expect(spyOnInject).toHaveBeenCalledWith(
       TABLE_ROW_TEST_VALUE,
@@ -194,7 +179,7 @@ describe('GenerateComponentsFromRowProps works', () => {
   })
 
   it('renders a component with its props already set', async () => {
-    const standaloneProps: GenerateComponentsFromRowProps = {
+    const standaloneProps: DetailsPageProps = {
       searchParams: {
         study: 'syn',
       },
@@ -208,7 +193,7 @@ describe('GenerateComponentsFromRowProps works', () => {
   })
 
   it('renders a component with a value that is comma delimited', async () => {
-    const multivalueProps: GenerateComponentsFromRowProps = {
+    const multivalueProps: DetailsPageProps = {
       searchParams: {
         study: 'syn',
       },
@@ -249,7 +234,7 @@ describe('GenerateComponentsFromRowProps works', () => {
     ]
     const wrapper = await createMountedComponent(props)
     await wrapper.update()
-    expect(wrapper.find(QueryWrapperFlattened)).toHaveLength(1)
+    expect(wrapper.find(StandaloneQueryWrapper)).toHaveLength(1)
     expect(spyOnInject).toHaveBeenCalled()
     expect(spyOnInject).toHaveBeenCalledWith(
       MOCK_HEADER_NAME,
@@ -273,11 +258,8 @@ describe('GenerateComponentsFromRowProps works', () => {
     ]
     const wrapper = await createMountedComponent(props)
     await wrapper.update()
-    expect(
-      wrapper
-        .find('h2')
-        .text()
-        .trim(),
-    ).toEqual(`${tableSynapseConfig.title}: ${MOCK_HEADER_NAME}`)
+    expect(wrapper.find('h2').text().trim()).toEqual(
+      `${tableSynapseConfig.title}: ${MOCK_HEADER_NAME}`,
+    )
   })
 })

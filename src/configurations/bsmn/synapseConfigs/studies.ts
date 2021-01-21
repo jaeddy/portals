@@ -1,27 +1,18 @@
 import { HomeExploreConfig } from 'types/portal-config'
 import { SynapseConstants } from 'synapse-react-client'
-import loadingScreen from '../loadingScreen'
 import { CardConfiguration } from 'synapse-react-client/dist/containers/CardContainerLogic'
-import { GenerateComponentsFromRowProps } from 'types/portal-util-types'
-import {
-  publicationsSql,
-  publicationsCardConfiguration,
-  publicationsEntityId,
-} from './publications'
+import { DetailsPageProps } from 'types/portal-util-types'
+import { publicationsCardConfiguration } from './publications'
+import { publicationsSql, studiesSql } from '../resources'
 
-const unitDescription = 'Studies'
+const unitDescription = 'Datasets'
 const rgbIndex = 0
-export const studiesSql = 'SELECT * FROM syn21438231'
-export const studiesEntityId = 'syn21438231'
-const entityId = studiesEntityId
-const sql = studiesSql
 const facet = 'Program'
 
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
-  loadingScreen,
   genericCardSchema: {
-    type: SynapseConstants.STUDY,
+    type: SynapseConstants.DATASET,
     title: 'studyName',
     subTitle: 'institutions',
     description: 'studyDescription',
@@ -30,27 +21,26 @@ export const studyCardConfiguration: CardConfiguration = {
       'diagnosis',
       'organs',
       'tissues',
+      'tissueFraction',
       'dataTypes',
       'project',
-      'ndaStudy',
+      'ndaLink',
     ],
   },
   labelLinkConfig: [
     {
-      matchColumnName: 'ndaStudy',
+      matchColumnName: 'ndaLink',
       isMarkdown: true,
     },
     {
-      isMarkdown: false,
+      isMarkdown: true,
       matchColumnName: 'project',
-      URLColumnName: 'id',
-      baseURL: 'Explore/Projects/DetailsPage',
     },
   ],
   secondaryLabelLimit: 4,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Studies/DetailsPage',
+    baseURL: 'Explore/Data/DetailsPage',
     URLColumnName: 'id',
     matchColumnName: 'id',
   },
@@ -58,37 +48,24 @@ export const studyCardConfiguration: CardConfiguration = {
 
 const studies: HomeExploreConfig = {
   homePageSynapseObject: {
-    name: 'QueryWrapperFlattened',
+    name: 'StandaloneQueryWrapper',
     props: {
       unitDescription,
       rgbIndex,
       facet,
-      loadingScreen,
-      link: 'Explore/Studies',
+      link: 'Explore/Data',
       linkText: 'Explore Studies',
-      initQueryRequest: {
-        entityId,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql,
-          limit: 25,
-          offset: 0,
-        },
-      },
+      sql: studiesSql,
     },
   },
   explorePageSynapseObject: {
     name: 'QueryWrapperPlotNav',
     props: {
       rgbIndex,
-      entityId,
       shouldDeepLink: true,
-      sql,
+      sql: studiesSql,
       hideDownload: true,
-      name: 'Studies',
+      name: 'Data',
       cardConfiguration: studyCardConfiguration,
       facetsToPlot: [
         'studyStatus',
@@ -96,55 +73,28 @@ const studies: HomeExploreConfig = {
         'organs',
         'tissues',
         'dataTypes',
+        'tissueFraction',
       ],
-      // searchConfiguration: {
-      //   searchable: [
-      //     {
-      //       columnName: 'studyName',
-      //       hintText: 'mosaic single nucleotide variations',
-      //     },
-      //     {
-      //       columnName: 'institutions',
-      //       hintText: 'Mayo Clinic',
-      //     },
-      //     {
-      //       columnName: 'studyDescription',
-      //       hintText: 'Reference Tissue',
-      //     },
-      //     {
-      //       columnName: 'diagnosis',
-      //       hintText: 'Schizophrenia',
-      //     },
-      //     {
-      //       columnName: 'organs',
-      //       hintText: 'Bran',
-      //     },
-      //     {
-      //       columnName: 'tissues',
-      //       hintText: 'Dorsolateral Prefrontal Cortex',
-      //     },
-      //     {
-      //       columnName: 'dataTypes',
-      //       hintText: 'Whole Genome Sequencing',
-      //     },
-      //     {
-      //       columnName: 'project',
-      //       hintText: 'syn1234',
-      //     },
-      //     {
-      //       columnName: 'methods',
-      //       hintText: '',
-      //     },
-      //   ],
-      // },
+      searchConfiguration: {
+        searchable: [
+          'studyName',
+          'institutions',
+          'studyDescription',
+          'diagnosis',
+          'organs',
+          'tissues',
+          'tissueFraction',
+          'dataTypes',
+          'methods',          
+        ],
+      },
     },
   },
 }
 
-export const studiesDetailPageConfiguration: GenerateComponentsFromRowProps = {
+export const studiesDetailPageConfiguration: DetailsPageProps = {
   showMenu: true,
-  sql,
-  entityId,
+  sql: studiesSql,
   synapseConfigArray: [
     {
       name: 'Markdown',
@@ -165,7 +115,6 @@ export const studiesDetailPageConfiguration: GenerateComponentsFromRowProps = {
       tableSqlKeys: ['study'],
       props: {
         sql: publicationsSql,
-        entityId: publicationsEntityId,
         ...publicationsCardConfiguration,
       },
     },
